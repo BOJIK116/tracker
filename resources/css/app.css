@@ -181,3 +181,36 @@ body::before{
   color: var(--accent);
   font-weight:700;
 }
+
+/* === Week UX additions === */
+
+.todayHead {
+  background: rgba(92,255,178,.08);
+}
+
+.todayCol {
+  background: rgba(92,255,178,.05);
+}
+
+.markBtn.future {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.markBtn.pending {
+  opacity: .65;
+}
+
+.kpiRow {
+  display:flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items:center;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+.kpiRow .good {
+  color: var(--accent);
+  font-weight:700;
+}

@@ -26,7 +26,6 @@ async function api(path, { method = 'GET', body } = {}) {
     body: body ? JSON.stringify(body) : undefined,
   })
 
-  // robust parsing: handles JSON + non-JSON (HTML error pages etc.)
   const text = await res.text()
   let data = {}
   try {
@@ -36,7 +35,6 @@ async function api(path, { method = 'GET', body } = {}) {
   }
 
   if (!res.ok) {
-    // prefer API message, fallback to raw text/status
     throw new Error(data?.message || (text && text.slice(0, 300)) || `HTTP ${res.status}`)
   }
 
@@ -70,7 +68,20 @@ function shiftIsoWeek(year, week, delta) {
   return { year: y, week: w }
 }
 
+function todayStrLocal() {
+  const d = new Date()
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${y}-${m}-${day}`
+}
+
+function isFutureDate(dateStr) {
+  return dateStr > todayStrLocal()
+}
+
 function App() {
+  const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('lp_test@example.com')
   const [password, setPassword] = useState('password')
 
@@ -81,8 +92,23 @@ function App() {
   const [error, setError] = useState('')
 
   const [selected, setSelected] = useState(() => getIsoWeek(new Date()))
-
   const dayLabels = useMemo(() => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], [])
+
+  const [streaks, setStreaks] = useState(null)
+  const [pending, setPending] = useState(() => new Set()) // keys: "directionId|isoWeekday|date"
+
+  function prevWeek() {
+    setSelected((s) => shiftIsoWeek(s.year, s.week, -1))
+  }
+
+  function nextWeek() {
+    setSelected((s) => shiftIsoWeek(s.year, s.week, +1))
+  }
+
+  async function loadStreaks() {
+    const data = await api('/tracker/streaks')
+    setStreaks(data)
+  }
 
   async function loadMeAndWeek(curr = selected) {
     setError('')
@@ -91,19 +117,31 @@ function App() {
       const meData = await api('/me')
       setMe(meData)
 
-      const weekData = await api(
-        `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
-      )
+      const weekData = await api(`/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`)
       setWeek(weekData)
+
+      loadStreaks().catch(() => {})
     } catch (e) {
       clearToken()
       setMe(null)
       setWeek(null)
+      setStreaks(null)
       setError(e.message)
     } finally {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') logout()
+      if (e.key === 'ArrowLeft') prevWeek()
+      if (e.key === 'ArrowRight') nextWeek()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     if (!getToken()) return
@@ -120,7 +158,6 @@ function App() {
   async function login(e) {
     e.preventDefault()
     setError('')
-    // loading управляет loadMeAndWeek (чтобы не было двойного setLoading)
     try {
       const data = await api('/login', {
         method: 'POST',
@@ -130,6 +167,23 @@ function App() {
       await loadMeAndWeek(selected)
     } catch (e2) {
       setError(e2.message)
+    }
+  }
+
+  async function register(e) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      const data = await api('/register', {
+        method: 'POST',
+        body: { email, password, name: email },
+      })
+      setToken(data.token)
+      await loadMeAndWeek(selected)
+    } catch (e2) {
+      setError(e2.message)
+      setLoading(false)
     }
   }
 
@@ -144,6 +198,7 @@ function App() {
       clearToken()
       setMe(null)
       setWeek(null)
+      setStreaks(null)
       setLoading(false)
     }
   }
@@ -154,39 +209,53 @@ function App() {
     const day = week.days.find((d) => d.iso_weekday === isoWeekday)
     if (!day) return
 
+    if (isFutureDate(day.date)) return
+
+    const pKey = `${directionId}|${isoWeekday}|${day.date}`
+
     setError('')
-    setLoading(true)
+    setPending((prev) => new Set(prev).add(pKey))
+
+    const prevWeek = week
+
+    const optimistic = {
+      ...week,
+      rows: week.rows.map((r) => {
+        if (r.direction.id !== directionId) return r
+        const statuses = { ...(r.statuses || {}) }
+        statuses[String(isoWeekday)] = !!nextValue
+        statuses[isoWeekday] = !!nextValue
+        return { ...r, statuses }
+      }),
+    }
+    setWeek(optimistic)
 
     try {
       await api('/tracker/mark', {
         method: 'POST',
         body: {
           direction_id: directionId,
-          date: day.date, // ✅ API ждёт date
-          value: nextValue ? 1 : 0,
+          date: day.date,
+          completed: Boolean(nextValue),
         },
       })
 
-      const weekData = await api(
-        `/tracker/week?year=${encodeURIComponent(selected.year)}&week=${encodeURIComponent(selected.week)}`
-      )
+      const weekData = await api(`/tracker/week?year=${encodeURIComponent(selected.year)}&week=${encodeURIComponent(selected.week)}`)
       setWeek(weekData)
+
+      loadStreaks().catch(() => {})
     } catch (e) {
+      setWeek(prevWeek)
       setError(e.message)
     } finally {
-      setLoading(false)
+      setPending((prev) => {
+        const next = new Set(prev)
+        next.delete(pKey)
+        return next
+      })
     }
   }
 
-  function prevWeek() {
-    setSelected((s) => shiftIsoWeek(s.year, s.week, -1))
-  }
-
-  function nextWeek() {
-    setSelected((s) => shiftIsoWeek(s.year, s.week, +1))
-  }
-
-  // ===== RENDER =====
   if (!me) {
     return (
       <div className="container">
@@ -205,33 +274,33 @@ function App() {
           <div className="termBody">
             <div className="hTitle">
               <span>tracker</span>
-              <span className="dim">/ login</span>
+              <span className="dim">/ {mode === 'login' ? 'login' : 'register'}</span>
             </div>
 
             <div className="hr" />
 
             {error ? <div className="alert">{error}</div> : null}
 
-            <form className="form" onSubmit={login}>
-              <input
-                className="input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="email"
-                autoComplete="email"
-              />
-              <input
-                className="input"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="password"
-                type="password"
-                autoComplete="current-password"
-              />
+            <form className="form" onSubmit={mode === 'login' ? login : register}>
+              <input className="input" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="email" />
+              <input className="input" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password" type="password" />
+
               <button className="btn primary" type="submit" disabled={loading}>
-                {loading ? 'Logging in…' : 'Login'}
+                {loading ? 'Processing…' : mode === 'login' ? 'Login' : 'Register'}
               </button>
             </form>
+
+            <div style={{ marginTop: 14 }}>
+              {mode === 'login' ? (
+                <button type="button" className="navBtn" onClick={() => setMode('register')}>
+                  No account? Register
+                </button>
+              ) : (
+                <button type="button" className="navBtn" onClick={() => setMode('login')}>
+                  Already registered? Login
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -287,11 +356,44 @@ function App() {
       onNext={nextWeek}
       onToggle={toggleMark}
       rangeLabel={rangeLabel}
+      pending={pending}
+      streaks={streaks}
     />
   )
 }
 
-function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext, onToggle, rangeLabel }) {
+function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext, onToggle, rangeLabel, pending, streaks }) {
+  function extractCurrent(s) {
+    if (!s) return 0
+    if (typeof s.current === 'number') return s.current
+    if (typeof s.current_streak === 'number') return s.current_streak
+    return 0
+  }
+
+  function extractBest(s) {
+    if (!s) return 0
+    if (typeof s.best === 'number') return s.best
+    if (typeof s.best_streak === 'number') return s.best_streak
+    return 0
+  }
+
+  const today = todayStrLocal()
+  const totalCells = week.rows.length * week.days.length
+
+  let doneCells = 0
+  let doneToday = 0
+
+  for (const row of week.rows) {
+    for (const d of week.days) {
+      const k = String(d.iso_weekday)
+      const val = Boolean(row.statuses?.[k] ?? row.statuses?.[d.iso_weekday])
+      if (val) doneCells++
+      if (d.date === today && val) doneToday++
+    }
+  }
+
+  const pct = totalCells ? Math.round((doneCells / totalCells) * 100) : 0
+
   return (
     <div className="container">
       <div className="term">
@@ -319,6 +421,7 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
 
           <div className="meta">
             {'<'} User: <span className="good">{me?.email ?? me?.name}</span>
+            {' >'} • Done today: <span className="good">{doneToday}</span> • Week: <span className="good">{pct}%</span>
           </div>
 
           <div className="gridWrap">
@@ -327,7 +430,7 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
                 <tr>
                   <th></th>
                   {week.days.map((d, idx) => (
-                    <th key={d.iso_weekday} title={d.date}>
+                    <th key={d.iso_weekday} title={d.date} className={d.date === today ? 'todayHead' : ''}>
                       {dayLabels[idx] ?? `D${d.iso_weekday}`}
                     </th>
                   ))}
@@ -338,17 +441,24 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
                 {week.rows.map((row) => (
                   <tr key={row.direction.id}>
                     <td>{row.direction.name}</td>
+
                     {week.days.map((d) => {
-                      const key = String(d.iso_weekday)
-                      const val = Boolean(row.statuses?.[key] ?? row.statuses?.[d.iso_weekday])
+                      const k = String(d.iso_weekday)
+                      const val = Boolean(row.statuses?.[k] ?? row.statuses?.[d.iso_weekday])
+
+                      const future = isFutureDate(d.date)
+                      const pKey = `${row.direction.id}|${d.iso_weekday}|${d.date}`
+                      const isPending = pending?.has?.(pKey)
+
                       return (
-                        <td key={d.iso_weekday}>
+                        <td key={d.iso_weekday} className={d.date === today ? 'todayCol' : ''} title={d.date}>
                           <button
                             type="button"
-                            className={`markBtn ${val ? 'on' : ''}`}
+                            className={['markBtn', val ? 'on' : '', future ? 'future' : '', isPending ? 'pending' : '']
+                              .filter(Boolean)
+                              .join(' ')}
+                            disabled={busy || future || isPending}
                             onClick={() => onToggle(row.direction.id, d.iso_weekday, !val)}
-                            disabled={busy}
-                            title={d.date}
                           >
                             {val ? '✓' : '—'}
                           </button>
@@ -373,8 +483,26 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
             </button>
           </div>
 
-          <div className="footerLine">
-            ISO {week.year} / week {week.week} • Keep it up! <span className="good">♥</span>
+          <div className="kpiRow">
+            <span>
+              ISO {week.year} / week {week.week}
+            </span>
+
+            <span>
+              Ready: <span className="good">{doneCells}</span>/<span className="good">{totalCells}</span> ({pct}%)
+            </span>
+
+            <span>
+              Today: <span className="good">{doneToday}</span>/<span className="good">{week.rows.length}</span>
+            </span>
+
+            <span>
+              Streak: <span className="good">{extractCurrent(streaks)}</span> • Best: <span className="good">{extractBest(streaks)}</span>
+            </span>
+
+            <span>
+              Keep it up! <span className="good">♥</span>
+            </span>
           </div>
         </div>
       </div>
