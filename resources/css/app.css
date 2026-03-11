@@ -214,3 +214,22 @@ body::before{
   color: var(--accent);
   font-weight:700;
 }
+
+.dirCell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.delBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  padding: 4px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: .8;
+}
+
+.delBtn:hover { opacity: 1; }
+.delBtn:disabled { opacity: .4; cursor: not-allowed; }

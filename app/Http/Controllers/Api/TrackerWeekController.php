@@ -12,29 +12,40 @@ class TrackerWeekController extends Controller
 {
     public function __invoke(TrackerWeekRequest $request)
     {
-        $userId = $request->user()->id;
+        $userId = (int) $request->user()->id;
 
         $year = (int) ($request->query('year') ?? now()->isoWeekYear());
         $week = (int) ($request->query('week') ?? now()->isoWeek());
 
         $monday = Carbon::now()->setISODate($year, $week)->startOfDay();
 
+        // 1) Берём направления ТОЛЬКО текущего пользователя
+        $directions = Direction::query()
+            ->where('user_id', $userId)
+            ->orderBy('id')
+            ->get(['id', 'slug', 'name']);
+
+        // Если направлений нет — всё равно вернём корректный каркас
+        // (фронту удобно)
+        $directionIds = $directions->pluck('id')->all();
+
+        // 2) Берём треки текущего пользователя только по этим направлениям
+        // (это защищает от мусорных track.direction_id)
         $tracks = Track::query()
             ->where('user_id', $userId)
             ->where('iso_year', $year)
             ->where('iso_week', $week)
             ->whereBetween('iso_weekday', [1, 7])
+            ->when(!empty($directionIds), fn ($q) => $q->whereIn('direction_id', $directionIds))
             ->get(['direction_id', 'iso_weekday', 'completed']);
 
+        // 3) Карта статусов: [direction_id][weekday] = bool
         $map = [];
         foreach ($tracks as $t) {
-            $map[$t->direction_id][(int) $t->iso_weekday] = (bool) $t->completed;
+            $map[(int) $t->direction_id][(int) $t->iso_weekday] = (bool) $t->completed;
         }
 
-        $directions = Direction::query()
-            ->orderBy('id')
-            ->get(['id', 'slug', 'name']);
-
+        // 4) Дни недели
         $days = [];
         for ($i = 0; $i < 7; $i++) {
             $d = $monday->copy()->addDays($i);
@@ -44,6 +55,7 @@ class TrackerWeekController extends Controller
             ];
         }
 
+        // 5) Ряды
         $rows = [];
         foreach ($directions as $dir) {
             $statuses = [];

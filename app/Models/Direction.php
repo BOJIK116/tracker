@@ -9,7 +9,7 @@ use App\Models\Track;
 
 class Direction extends Model
 {
-    protected $fillable = ['name', 'slug'];
+    protected $fillable = ['user_id', 'name', 'slug'];
 
     public function tracks(){
 

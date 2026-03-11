@@ -16,9 +16,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 
-    Route::get('/directions', [DirectionController::class, 'index']);
     Route::get('/tracker/week', TrackerWeekController::class);
     Route::post('/tracker/mark', TrackerMarkController::class);
     Route::get('/tracker/streaks', TrackerStreaksController::class);
+
+    Route::get('/directions', [DirectionController::class, 'index']);
+    Route::post('/directions', [DirectionController::class, 'store']);
+    Route::delete('/directions/{direction}', [DirectionController::class, 'destroy']);
+
 });
 

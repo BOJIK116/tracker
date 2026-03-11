@@ -80,6 +80,57 @@ function isFutureDate(dateStr) {
   return dateStr > todayStrLocal()
 }
 
+/**
+ * Form: create user direction
+ * Requires API: POST /api/directions { name }
+ */
+function CreateDirectionForm({ disabled, onCreated }) {
+  const [name, setName] = useState('')
+  const [saving, setSaving] = useState(false)
+  const [err, setErr] = useState('')
+
+  async function submit(e) {
+    e.preventDefault()
+    const trimmed = name.trim()
+    if (!trimmed) return
+
+    setErr('')
+    setSaving(true)
+    try {
+      const dir = await api('/directions', {
+        method: 'POST',
+        body: { name: trimmed },
+      })
+      setName('')
+      onCreated?.(dir)
+    } catch (e2) {
+      setErr(e2.message || 'Failed to create direction')
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  return (
+    <form onSubmit={submit} className="dirForm">
+      <div className="dirFormLeft">
+        <span className="dim">Add direction:</span>
+        <input
+          className="input"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="e.g. gym / reading / code"
+          disabled={disabled || saving}
+        />
+        <button className="btn" type="submit" disabled={disabled || saving || !name.trim()}>
+          {saving ? 'Saving…' : 'Add'}
+        </button>
+      </div>
+
+      {err ? <div className="alert" style={{ marginTop: 10 }}>{err}</div> : null}
+    </form>
+  )
+}
+
 function App() {
   const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('lp_test@example.com')
@@ -108,6 +159,12 @@ function App() {
   async function loadStreaks() {
     const data = await api('/tracker/streaks')
     setStreaks(data)
+  }
+
+  async function reloadWeekOnly(curr = selected) {
+    const weekData = await api(`/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`)
+    setWeek(weekData)
+    loadStreaks().catch(() => {})
   }
 
   async function loadMeAndWeek(curr = selected) {
@@ -203,6 +260,25 @@ function App() {
     }
   }
 
+  async function deleteDirection(directionId) {
+  if (!confirm('Удалить направление? Все отметки по нему тоже удалятся.')) return
+
+  setError('')
+  setLoading(true)
+  try {
+    await api(`/directions/${directionId}`, { method: 'DELETE' })
+    const weekData = await api(`/tracker/week?year=${encodeURIComponent(selected.year)}&week=${encodeURIComponent(selected.week)}`)
+    setWeek(weekData)
+    loadStreaks().catch(() => {})
+  } catch (e) {
+    setError(e.message)
+  } finally {
+    setLoading(false)
+  }
+}
+
+
+
   async function toggleMark(directionId, isoWeekday, nextValue) {
     if (!week) return
 
@@ -216,7 +292,7 @@ function App() {
     setError('')
     setPending((prev) => new Set(prev).add(pKey))
 
-    const prevWeek = week
+    const prevWeekState = week
 
     const optimistic = {
       ...week,
@@ -240,12 +316,9 @@ function App() {
         },
       })
 
-      const weekData = await api(`/tracker/week?year=${encodeURIComponent(selected.year)}&week=${encodeURIComponent(selected.week)}`)
-      setWeek(weekData)
-
-      loadStreaks().catch(() => {})
+      await reloadWeekOnly(selected)
     } catch (e) {
-      setWeek(prevWeek)
+      setWeek(prevWeekState)
       setError(e.message)
     } finally {
       setPending((prev) => {
@@ -358,11 +431,28 @@ function App() {
       rangeLabel={rangeLabel}
       pending={pending}
       streaks={streaks}
+      onReloadWeek={() => reloadWeekOnly(selected)}
+      onDeleteDirection={deleteDirection}
     />
   )
 }
 
-function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext, onToggle, rangeLabel, pending, streaks }) {
+function WeekScreen({
+  me,
+  week,
+  dayLabels,
+  busy,
+  error,
+  onLogout,
+  onPrev,
+  onNext,
+  onToggle,
+  rangeLabel,
+  pending,
+  streaks,
+  onReloadWeek,
+  onDeleteDirection,
+}) {
   function extractCurrent(s) {
     if (!s) return 0
     if (typeof s.current === 'number') return s.current
@@ -424,6 +514,14 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
             {' >'} • Done today: <span className="good">{doneToday}</span> • Week: <span className="good">{pct}%</span>
           </div>
 
+          {/* NEW: add direction */}
+          <CreateDirectionForm
+            disabled={busy}
+            onCreated={() => {
+              onReloadWeek?.()
+            }}
+          />
+
           <div className="gridWrap">
             <table className="grid">
               <thead>
@@ -440,7 +538,20 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
               <tbody>
                 {week.rows.map((row) => (
                   <tr key={row.direction.id}>
-                    <td>{row.direction.name}</td>
+                    <td className="dirCell">
+  <span>{row.direction.name}</span>
+
+  <button
+    type="button"
+    className="delBtn"
+    disabled={busy}
+    onClick={() => onDeleteDirection?.(row.direction.id)}
+    title="Delete direction"
+  >
+    DEL
+  </button>
+</td>
+
 
                     {week.days.map((d) => {
                       const k = String(d.iso_weekday)
@@ -484,9 +595,7 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
           </div>
 
           <div className="kpiRow">
-            <span>
-              ISO {week.year} / week {week.week}
-            </span>
+            <span>ISO {week.year} / week {week.week}</span>
 
             <span>
               Ready: <span className="good">{doneCells}</span>/<span className="good">{totalCells}</span> ({pct}%)
@@ -497,7 +606,8 @@ function WeekScreen({ me, week, dayLabels, busy, error, onLogout, onPrev, onNext
             </span>
 
             <span>
-              Streak: <span className="good">{extractCurrent(streaks)}</span> • Best: <span className="good">{extractBest(streaks)}</span>
+              Streak: <span className="good">{extractCurrent(streaks)}</span> • Best:{' '}
+              <span className="good">{extractBest(streaks)}</span>
             </span>
 
             <span>
