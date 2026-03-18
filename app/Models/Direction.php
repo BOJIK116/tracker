@@ -9,6 +9,7 @@ use App\Models\Track;
 
 class Direction extends Model
 {
+    use HasFactory;
     protected $fillable = ['user_id', 'name', 'slug'];
 
     public function tracks(){

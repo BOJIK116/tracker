@@ -8,9 +8,11 @@ use App\Models\Direction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class DirectionController extends Controller
 {
+    use AuthorizesRequests;
     public function index(Request $request): Collection
     {
         return Direction::query()
@@ -49,15 +51,12 @@ class DirectionController extends Controller
         return response()->json($direction, 201);
     }
 
-    public function destroy(Request $request, int $id)
-    {
-    $direction = Direction::query()
-        ->where('id', $id)
-        ->where('user_id', $request->user()->id)
-        ->firstOrFail();
+    public function destroy(Request $request, Direction $direction)
+{
+    $this->authorize('delete', $direction);
 
     $direction->delete();
 
     return response()->noContent();
-    }
+}
 }
