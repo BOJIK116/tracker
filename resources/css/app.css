@@ -122,22 +122,30 @@ body::before{
 .grid{
   width:100%;
   border-collapse: collapse;
+  table-layout: fixed;
 }
-.grid th, .grid td{
+
+.grid th,
+.grid td{
   border-right:1px solid var(--line2);
   border-bottom:1px solid var(--line2);
   padding: 10px 10px;
   text-align:center;
+  box-sizing:border-box;
 }
-.grid th:first-child, .grid td:first-child{
+
+.grid th:first-child,
+.grid td:first-child{
+  width: 240px;
   text-align:left;
   color: var(--accent);
-  width: 180px;
 }
+
 .grid th{
   color: var(--muted);
   font-weight:600;
 }
+
 .grid tr:last-child td{ border-bottom:none; }
 .grid th:last-child, .grid td:last-child{ border-right:none; }
 
@@ -172,34 +180,18 @@ body::before{
 }
 .navBtn:hover{ text-decoration: underline; }
 
-.footerLine{
-  margin-top: 16px;
-  color: var(--muted);
-}
-
 .good{
   color: var(--accent);
   font-weight:700;
 }
 
-/* === Week UX additions === */
+/* === UX === */
 
-.todayHead {
-  background: rgba(92,255,178,.08);
-}
+.todayHead { background: rgba(92,255,178,.08); }
+.todayCol { background: rgba(92,255,178,.05); }
 
-.todayCol {
-  background: rgba(92,255,178,.05);
-}
-
-.markBtn.future {
-  opacity: .35;
-  cursor: not-allowed;
-}
-
-.markBtn.pending {
-  opacity: .65;
-}
+.markBtn.future { opacity: .35; cursor: not-allowed; }
+.markBtn.pending { opacity: .65; }
 
 .kpiRow {
   display:flex;
@@ -210,22 +202,34 @@ body::before{
   color: var(--muted);
 }
 
-.kpiRow .good {
-  color: var(--accent);
-  font-weight:700;
+/* === FIRST COLUMN FIX === */
+/* dirCell висит на td, поэтому td нельзя делать flex/grid */
+
+td.dirCell {
+  position: relative;
+  padding-right: 78px; /* место под кнопку DEL */
+  vertical-align: middle;
 }
 
-.dirCell {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
+td.dirCell > span {
+  display: block;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td.dirCell > .delBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .delBtn {
   background: transparent;
   border: 1px solid rgba(255,255,255,.2);
-  padding: 4px 8px;
+  padding: 3px 8px;
   border-radius: 10px;
   cursor: pointer;
   opacity: .8;
@@ -233,3 +237,60 @@ body::before{
 
 .delBtn:hover { opacity: 1; }
 .delBtn:disabled { opacity: .4; cursor: not-allowed; }
+
+/* === Add direction === */
+
+.createDirForm {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 8px 0 12px;
+  flex-wrap:wrap;
+}
+
+.createDirControls {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+
+.createDirInput {
+  width:260px;
+  height:36px;
+  padding:0 10px;
+  background: rgba(5, 20, 17, 0.8);
+  border: 1px solid rgba(92, 255, 201, 0.15);
+  border-radius: 8px;
+  color: #eafff8;
+  outline: none;
+}
+
+.createDirInput::placeholder {
+  color: rgba(216, 253, 242, 0.45);
+}
+
+.createDirInput:focus {
+  border-color: rgba(92, 255, 201, 0.5);
+  box-shadow: 0 0 10px rgba(92, 255, 201, 0.15);
+}
+
+.createDirBtn {
+  height: 36px;
+  padding: 0 14px;
+  background: rgba(5, 20, 17, 0.9);
+  border: 1px solid rgba(92, 255, 201, 0.15);
+  border-radius: 8px;
+  color: #5cffc9;
+  cursor: pointer;
+}
+
+.createDirBtn:hover:not(:disabled) {
+  border-color: rgba(92, 255, 201, 0.4);
+  box-shadow: 0 0 10px rgba(92, 255, 201, 0.12);
+}
+
+.createDirBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

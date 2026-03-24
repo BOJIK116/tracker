@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  @vite(['resources/css/app.css', 'resources/js/app.jsx'])
+  @viteReactRefresh
+  @vite(['resources/css/app.css', 'resources/js/app/main.jsx'])
   <title>Tracker</title>
 </head>
 <body>
