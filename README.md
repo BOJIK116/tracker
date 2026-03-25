@@ -1,59 +1,179 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Multi-user habit tracker built with Laravel + React.
 
-## About Laravel
+Users can create habits (directions), track daily progress, and view weekly statistics with streaks.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Tech Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Backend:
+- Laravel (latest)
+- Laravel Sanctum (API authentication)
+- MySQL
 
-## Learning Laravel
+Frontend:
+- React (Vite)
+- Fetch API
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Features
 
-## Laravel Sponsors
+- User authentication (register/login/logout)
+- Multi-user data isolation
+- Create and manage habits (directions)
+- Daily tracking (mark completed / not completed)
+- Weekly overview (grid view)
+- Streak tracking (current / best)
+- Slug generation with per-user uniqueness
+- Secure API with authorization policies
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+---
 
-### Premium Partners
+## Security
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+- Sanctum Bearer token authentication
+- All data scoped by user_id
+- Users can:
+  - see only their own data
+  - modify only their own directions
+- Unauthorized actions return 403 Forbidden
+- Policies used for authorization
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Testing
 
-## Code of Conduct
+Feature tests cover:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- multi-user isolation
+- direction access control
+- tracker security
+- slug uniqueness
+- weekly aggregation logic
 
-## Security Vulnerabilities
+Run tests:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan test --env=testing
+```
 
-## License
+---
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## API Overview
+
+Auth:
+- POST /api/register
+- POST /api/login
+- POST /api/logout
+- GET /api/me
+
+Directions:
+- GET /api/directions
+- POST /api/directions
+- DELETE /api/directions/{id}
+
+Tracker:
+- GET /api/tracker/week
+- POST /api/tracker/mark
+- GET /api/tracker/streaks
+
+---
+
+## Database Structure
+
+directions:
+
+```
+id
+user_id
+name
+slug
+timestamps
+```
+
+Constraint:
+
+```
+UNIQUE(user_id, slug)
+```
+
+tracks:
+
+```
+id
+user_id
+direction_id
+iso_year
+iso_week
+iso_weekday
+completed
+timestamps
+```
+
+---
+
+## Setup
+
+```bash
+git clone <repo>
+cd tracker
+
+composer install
+npm install
+
+cp .env.example .env
+php artisan key:generate
+
+# configure DB
+
+php artisan migrate
+php artisan serve
+npm run dev
+```
+
+---
+
+## Testing Setup
+
+Create test database:
+
+```sql
+CREATE DATABASE tracker_test;
+```
+
+Run tests:
+
+```bash
+php artisan test
+```
+
+---
+
+## Project Status
+
+Backend is production-ready:
+- secure
+- tested
+- scalable
+
+Frontend is functional and ready for UI improvements.
+
+---
+
+## Future Improvements
+
+- API Resources
+- Pagination & filters
+- Rate limiting
+- Docker
+- CI/CD
+- Deployment
+
+---
+
+## Author
+
+Portfolio project
