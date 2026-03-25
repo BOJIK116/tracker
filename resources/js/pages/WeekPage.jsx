@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import CreateDirectionForm from '../components/directions/CreateDirectionForm'
 import WeekGrid from '../components/tracker/WeekGrid'
 import WeekStats from '../components/tracker/WeekStats'
@@ -23,6 +23,9 @@ export default function WeekPage({
   const today = todayStrLocal()
   const totalCells = week.rows.length * week.days.length
 
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedDirections, setSelectedDirections] = useState([])
+
   let doneCells = 0
   let doneToday = 0
 
@@ -37,6 +40,38 @@ export default function WeekPage({
   }
 
   const pct = totalCells ? Math.round((doneCells / totalCells) * 100) : 0
+
+  function startSelectionMode() {
+    setSelectionMode(true)
+    setSelectedDirections([])
+  }
+
+  function cancelSelectionMode() {
+    setSelectionMode(false)
+    setSelectedDirections([])
+  }
+
+  function toggleDirectionSelection(directionId) {
+    setSelectedDirections((prev) =>
+      prev.includes(directionId)
+        ? prev.filter((id) => id !== directionId)
+        : [...prev, directionId]
+    )
+  }
+
+  async function deleteSelectedDirections() {
+    if (!selectedDirections.length) return
+
+    const ok = window.confirm('Удалить выбранные направления? Все отметки по ним тоже удалятся.')
+    if (!ok) return
+
+    for (const directionId of selectedDirections) {
+      await onDeleteDirection?.(directionId)
+    }
+
+    setSelectedDirections([])
+    setSelectionMode(false)
+  }
 
   return (
     <div className="container">
@@ -69,12 +104,47 @@ export default function WeekPage({
             <span className="good">{pct}%</span>
           </div>
 
-          <CreateDirectionForm
-            disabled={busy}
-            onCreated={() => {
-              onReloadWeek?.()
-            }}
-          />
+          <div className="toolbarRow">
+            <CreateDirectionForm
+              disabled={busy || selectionMode}
+              onCreated={() => {
+                onReloadWeek?.()
+              }}
+            />
+
+            <div className="bulkActions">
+              {!selectionMode ? (
+                <button
+                  type="button"
+                  className="navBtn"
+                  onClick={startSelectionMode}
+                  disabled={busy}
+                >
+                  Select
+                </button>
+              ) : (
+                <>
+                  <button
+                    type="button"
+                    className="navBtn dangerBtn"
+                    onClick={deleteSelectedDirections}
+                    disabled={busy || !selectedDirections.length}
+                  >
+                    Удалить
+                  </button>
+
+                  <button
+                    type="button"
+                    className="navBtn"
+                    onClick={cancelSelectionMode}
+                    disabled={busy}
+                  >
+                    Отмена
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
 
           <WeekGrid
             week={week}
@@ -82,7 +152,9 @@ export default function WeekPage({
             pending={pending}
             busy={busy}
             onToggle={onToggle}
-            onDeleteDirection={onDeleteDirection}
+            selectionMode={selectionMode}
+            selectedDirections={selectedDirections}
+            onToggleDirectionSelection={toggleDirectionSelection}
           />
 
           <div className="navRow">

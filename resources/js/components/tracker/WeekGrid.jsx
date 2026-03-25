@@ -7,7 +7,9 @@ export default function WeekGrid({
   pending,
   busy,
   onToggle,
-  onDeleteDirection,
+  selectionMode,
+  selectedDirections,
+  onToggleDirectionSelection,
 }) {
   const today = todayStrLocal()
 
@@ -17,8 +19,14 @@ export default function WeekGrid({
         <thead>
           <tr>
             <th></th>
+            {selectionMode ? <th className="selectColHead"></th> : null}
+
             {week.days.map((d, idx) => (
-              <th key={d.iso_weekday} title={d.date} className={d.date === today ? 'todayHead' : ''}>
+              <th
+                key={d.iso_weekday}
+                title={d.date}
+                className={d.date === today ? 'todayHead' : ''}
+              >
                 {dayLabels[idx] ?? `D${d.iso_weekday}`}
               </th>
             ))}
@@ -28,19 +36,26 @@ export default function WeekGrid({
         <tbody>
           {week.rows.map((row) => (
             <tr key={row.direction.id}>
-              <td className="dirCell">
+              <td className="dirNameCell">
                 <span>{row.direction.name}</span>
-
-                <button
-                  type="button"
-                  className="delBtn"
-                  disabled={busy}
-                  onClick={() => onDeleteDirection?.(row.direction.id)}
-                  title="Delete direction"
-                >
-                  DEL
-                </button>
               </td>
+
+              {selectionMode ? (
+                <td className="dirSelectCell">
+                  <button
+                    type="button"
+                    className={[
+                      'selectBtn',
+                      selectedDirections?.includes(row.direction.id) ? 'active' : '',
+                    ].filter(Boolean).join(' ')}
+                    disabled={busy}
+                    onClick={() => onToggleDirectionSelection?.(row.direction.id)}
+                    title="Select direction"
+                  >
+                    {selectedDirections?.includes(row.direction.id) ? '✓' : ''}
+                  </button>
+                </td>
+              ) : null}
 
               {week.days.map((d) => {
                 const k = String(d.iso_weekday)
@@ -51,12 +66,19 @@ export default function WeekGrid({
                 const isPending = pending?.has?.(pKey)
 
                 return (
-                  <td key={d.iso_weekday} className={d.date === today ? 'todayCol' : ''} title={d.date}>
+                  <td
+                    key={d.iso_weekday}
+                    className={d.date === today ? 'todayCol' : ''}
+                    title={d.date}
+                  >
                     <button
                       type="button"
-                      className={['markBtn', val ? 'on' : '', future ? 'future' : '', isPending ? 'pending' : '']
-                        .filter(Boolean)
-                        .join(' ')}
+                      className={[
+                        'markBtn',
+                        val ? 'on' : '',
+                        future ? 'future' : '',
+                        isPending ? 'pending' : '',
+                      ].filter(Boolean).join(' ')}
                       disabled={busy || future || isPending}
                       onClick={() => onToggle(row.direction.id, d.iso_weekday, !val)}
                     >
