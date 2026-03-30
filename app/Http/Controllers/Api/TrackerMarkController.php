@@ -17,7 +17,7 @@ class TrackerMarkController extends Controller
 
         $directionId = (int) $data['direction_id'];
 
-        // 🔒 Запрещаем отмечать чужие направления
+        // защита от отметки
         $ownsDirection = Direction::query()
             ->where('id', $directionId)
             ->where('user_id', $userId)

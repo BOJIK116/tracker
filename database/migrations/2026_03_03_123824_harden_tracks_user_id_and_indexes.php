@@ -13,10 +13,7 @@ class HardenTracksUserIdAndIndexes extends Migration
             $table->foreignId('user_id')->nullable(false)->change();
         });
 
-        // индексы под типичные выборки недели
         Schema::table('tracks', function (Blueprint $table) {
-            // Если уже есть похожий индекс — этот может быть лишним,
-            // но обычно это самый полезный для /tracker/week
             $table->index(['user_id', 'iso_year', 'iso_week'], 'tracks_user_year_week_idx');
             $table->index(['user_id', 'direction_id'], 'tracks_user_direction_idx');
         });

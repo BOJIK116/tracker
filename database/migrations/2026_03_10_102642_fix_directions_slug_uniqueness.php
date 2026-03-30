@@ -8,14 +8,10 @@ class FixDirectionsSlugUniqueness extends Migration
 {
     public function up(): void
 {
-    Schema::table('directions', function (Blueprint $table) {
-
-        // удалить старый индекс если существует
-        $table->dropUnique(['user_id', 'slug']);
-
-        // создать новый
-        $table->unique(['user_id', 'slug'], 'directions_user_id_slug_unique');
-    });
+        Schema::table('directions', function (Blueprint $table) {
+            $table->dropUnique(['user_id', 'slug']);
+            $table->unique(['user_id', 'slug'], 'directions_user_id_slug_unique');
+        });
 }
 
     public function down(): void

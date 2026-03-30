@@ -19,18 +19,15 @@ class TrackerWeekController extends Controller
 
         $monday = Carbon::now()->setISODate($year, $week)->startOfDay();
 
-        // 1) Берём направления ТОЛЬКО текущего пользователя
+        // направления ТОЛЬКО текущего пользователя
         $directions = Direction::query()
             ->where('user_id', $userId)
             ->orderBy('id')
             ->get(['id', 'slug', 'name']);
 
-        // Если направлений нет — всё равно вернём корректный каркас
-        // (фронту удобно)
         $directionIds = $directions->pluck('id')->all();
 
-        // 2) Берём треки текущего пользователя только по этим направлениям
-        // (это защищает от мусорных track.direction_id)
+        // треки текущего пользователя только по этим направлениям
         $tracks = Track::query()
             ->where('user_id', $userId)
             ->where('iso_year', $year)
@@ -39,13 +36,13 @@ class TrackerWeekController extends Controller
             ->when(!empty($directionIds), fn ($q) => $q->whereIn('direction_id', $directionIds))
             ->get(['direction_id', 'iso_weekday', 'completed']);
 
-        // 3) Карта статусов: [direction_id][weekday] = bool
+        // карта статусов: [direction_id][weekday] = bool
         $map = [];
         foreach ($tracks as $t) {
             $map[(int) $t->direction_id][(int) $t->iso_weekday] = (bool) $t->completed;
         }
 
-        // 4) Дни недели
+        // дни недели
         $days = [];
         for ($i = 0; $i < 7; $i++) {
             $d = $monday->copy()->addDays($i);
@@ -55,7 +52,7 @@ class TrackerWeekController extends Controller
             ];
         }
 
-        // 5) Ряды
+        // ряды
         $rows = [];
         foreach ($directions as $dir) {
             $statuses = [];

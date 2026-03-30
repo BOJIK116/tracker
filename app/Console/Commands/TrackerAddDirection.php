@@ -13,7 +13,7 @@ class TrackerAddDirection extends Command
 
     public function handle()
     {
-        // если аргумент не передан — спрашиваем
+        // если аргумента нет
         $name = $this->argument('name') ?? $this->ask('Введите название направления');
 
         $name = trim($name);

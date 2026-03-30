@@ -28,7 +28,7 @@ class DirectionController extends Controller
         $name = trim((string) $request->input('name'));
         $slug = Str::slug($name);
 
-        // делаем slug уникальным в рамках пользователя: slug, slug-2, slug-3...
+        // уникальные слаги
         $base = $slug;
         $i = 2;
 

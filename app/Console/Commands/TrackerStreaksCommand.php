@@ -26,7 +26,6 @@ class TrackerStreaksCommand extends Command
             return self::FAILURE;
         }
 
-        // Минимум 30 дней, максимум 5000 — чтобы не случайно поставить миллион
         $maxDays = min(5000, max(30, $daysRaw));
 
         $directions = Direction::query()
@@ -38,7 +37,7 @@ class TrackerStreaksCommand extends Command
             return self::FAILURE;
         }
 
-        // Если slug не передали — дадим выбрать интерактивно (или "Все")
+        // Если slug не передали дадим выбрать интерактив
         if (! $onlySlug && $directions->count() > 1) {
             $options = ['Все направления'];
             foreach ($directions as $d) {
