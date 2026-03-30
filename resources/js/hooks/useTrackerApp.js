@@ -83,43 +83,41 @@ export function useTrackerApp() {
     loadMeAndWeek(selected).catch(() => {})
   }, [selected.year, selected.week])
 
-  async function login(e) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+  async function login() {
+  setError('')
+  setLoading(true)
 
-    try {
-      const data = await api('/login', {
-        method: 'POST',
-        body: { email, password },
-      })
+  try {
+    const data = await api('/login', {
+      method: 'POST',
+      body: { email, password },
+    })
 
-      setToken(data.token)
-      await loadMeAndWeek(selected)
-    } catch (e2) {
-      setError(e2.message)
-      setLoading(false)
-    }
+    setToken(data.token)
+    await loadMeAndWeek(selected)
+  } catch (e2) {
+    setError(e2.message)
+    setLoading(false)
   }
+}
 
-  async function register(e) {
-    e.preventDefault()
-    setError('')
-    setLoading(true)
+async function register() {
+  setError('')
+  setLoading(true)
 
-    try {
-      const data = await api('/register', {
-        method: 'POST',
-        body: { email, password, name: email },
-      })
+  try {
+    const data = await api('/register', {
+      method: 'POST',
+      body: { email, password, name: email },
+    })
 
-      setToken(data.token)
-      await loadMeAndWeek(selected)
-    } catch (e2) {
-      setError(e2.message)
-      setLoading(false)
-    }
+    setToken(data.token)
+    await loadMeAndWeek(selected)
+  } catch (e2) {
+    setError(e2.message)
+    setLoading(false)
   }
+}
 
   async function logout() {
     setError('')

@@ -1,5 +1,3 @@
-import React from 'react'
-
 export default function AuthPage({
   mode,
   setMode,
@@ -12,67 +10,99 @@ export default function AuthPage({
   onLogin,
   onRegister,
 }) {
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    if (mode === "login") {
+      onLogin();
+    } else {
+      onRegister();
+    }
+  }
+
   return (
-    <div className="container">
-      <div className="term">
-        <div className="termTop">
-          <div className="badge">
-            <span className="dot" />
+    <div className="auth-shell">
+      <div className="auth-card">
+        <div className="auth-topbar">
+          <div className="auth-host">
+            <span className="auth-dot" />
             <span>user@host: ~/tasks</span>
           </div>
-
-          <span className="keyBtn" style={{ cursor: 'default' }}>
-            <span className="key">API</span>
-            <span>offline</span>
-          </span>
         </div>
 
-        <div className="termBody">
-          <div className="hTitle">
-            <span>tracker</span>
-            <span className="dim">/ {mode === 'login' ? 'login' : 'register'}</span>
+        <div className="auth-body">
+          <div className="auth-heading">
+            <div className="auth-path">
+              <span className="brand">tracker</span>
+              <span className="slash"> / </span>
+              <span>{mode}</span>
+              <span className="cursor" />
+            </div>
+
+            <p className="auth-subtitle">
+              {mode === "login"
+                ? "Sign in to continue your weekly activity tracking."
+                : "Create an account to start tracking your progress."}
+            </p>
           </div>
 
-          <div className="hr" />
-
-          {error ? <div className="alert">{error}</div> : null}
-
-          <form className="form" onSubmit={mode === 'login' ? onLogin : onRegister}>
+          <form className="auth-form" onSubmit={handleSubmit}>
             <input
-              className="input"
+              type="email"
+              placeholder="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="email"
-              autoComplete="email"
+              required
             />
 
             <input
-              className="input"
+              type="password"
+              placeholder="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="password"
-              type="password"
-              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              required
             />
 
-            <button className="btn primary" type="submit" disabled={loading}>
-              {loading ? 'Processing…' : mode === 'login' ? 'Login' : 'Register'}
+            <button
+              type="submit"
+              className={loading ? "is-loading" : ""}
+              disabled={loading}
+            >
+              {loading
+                ? "Connecting..."
+                : mode === "login"
+                ? "Login"
+                : "Create account"}
             </button>
           </form>
 
-          <div style={{ marginTop: 14 }}>
-            {mode === 'login' ? (
-              <button type="button" className="navBtn" onClick={() => setMode('register')}>
-                No account? Register
-              </button>
-            ) : (
-              <button type="button" className="navBtn" onClick={() => setMode('login')}>
-                Already registered? Login
-              </button>
-            )}
-          </div>
+          {error && <div className="auth-error">{error}</div>}
+
+          <button
+            className="auth-link"
+            type="button"
+            onClick={() =>
+              setMode(mode === "login" ? "register" : "login")
+            }
+          >
+            {mode === "login"
+              ? "No account? Register"
+              : "Already have an account? Login"}
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
+  function handleSubmit(e) {
+  e.preventDefault();
+  console.log("submit", { mode, email, password });
+
+  if (mode === "login") {
+    console.log("calling onLogin");
+    onLogin();
+  } else {
+    console.log("calling onRegister");
+    onRegister();
+  }
+}
 }

@@ -19,6 +19,7 @@ export default function App() {
         error={tracker.error}
         onLogin={tracker.login}
         onRegister={tracker.register}
+      
       />
     )
   }
@@ -74,4 +75,5 @@ export default function App() {
       onDeleteDirection={tracker.deleteDirection}
     />
   )
+
 }
