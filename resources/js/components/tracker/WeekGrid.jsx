@@ -36,7 +36,7 @@ export default function WeekGrid({
         <tbody>
           {week.rows.map((row) => (
             <tr key={row.direction.id}>
-              <td className="dirNameCell">
+              <td className="dirCell">
                 <span>{row.direction.name}</span>
               </td>
 

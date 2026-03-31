@@ -505,3 +505,573 @@ body {
     font-size: 16px;
   }
 }
+
+/* === TABLE === */
+
+.gridWrap{
+  border:1px solid var(--line2);
+  border-radius: 10px;
+  overflow:hidden;
+}
+
+.grid{
+  width:100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.grid th,
+.grid td{
+  border-right:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);
+  padding: 10px 10px;
+  text-align:center;
+  box-sizing:border-box;
+}
+
+.grid th:first-child,
+.grid td:first-child{
+  width: 240px;
+  text-align:left;
+  color: var(--accent);
+}
+
+.grid th{
+  color: var(--muted);
+  font-weight:600;
+}
+
+.grid tr:last-child td{ 
+  border-bottom:none; 
+}
+
+.grid th:last-child, 
+.grid td:last-child{ 
+  border-right:none; 
+}
+
+/* === MARK BUTTONS === */
+
+.markBtn{
+  width: 44px;
+  height: 34px;
+  border-radius: 8px;
+  border:1px solid var(--line2);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
+  cursor:pointer;
+}
+
+.markBtn.on{
+  border-color: rgba(92,255,178,.55);
+  box-shadow: 0 0 0 3px rgba(92,255,178,.10);
+}
+
+.markBtn:disabled{ 
+  opacity:.5; 
+  cursor:not-allowed; 
+}
+
+.markBtn.future { 
+  opacity: .35; 
+  cursor: not-allowed; 
+}
+
+.markBtn.pending { 
+  opacity: .65; 
+}
+
+/* === TODAY HIGHLIGHT === */
+
+.todayHead { 
+  background: rgba(92,255,178,.08); 
+}
+
+.todayCol { 
+  background: rgba(92,255,178,.05); 
+}
+
+/* === FIRST COLUMN === */
+
+td.dirCell {
+  position: relative;
+  padding-right: 78px;
+  vertical-align: middle;
+}
+
+td.dirCell > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td.dirCell > .delBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* === DELETE BUTTON === */
+
+.delBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  padding: 3px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: .8;
+}
+
+.delBtn:hover { 
+  opacity: 1; 
+}
+
+.delBtn:disabled { 
+  opacity: .4; 
+  cursor: not-allowed; 
+}
+
+/* === SELECT MODE === */
+
+.selectColHead,
+.dirSelectCell {
+  width: 72px;
+  text-align: center;
+}
+
+.dirNameCell {
+  text-align: left;
+  color: var(--accent);
+}
+
+.dirNameCell > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.selectBtn {
+  width: 54px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.12);
+  color: var(--accent);
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.selectBtn.active {
+  border-color: rgba(92,255,178,.55);
+  box-shadow: 0 0 0 3px rgba(92,255,178,.08);
+  background: rgba(92,255,178,.08);
+}
+
+.selectBtn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* ===== WEEK PAGE ===== */
+
+:root{
+  --bg:#050707;
+  --panel:#070b0c;
+  --line:rgba(152,255,196,.22);
+  --line2:rgba(152,255,196,.12);
+  --text:#d7ffe9;
+  --muted:rgba(215,255,233,.68);
+  --accent:#5cffb2;
+  --accent2:#3ddc97;
+  --warn:#ffd36a;
+}
+
+.container{
+  max-width: 980px;
+  margin: 42px auto;
+  padding: 0 16px;
+}
+
+.term{
+  border:1px solid var(--line);
+  background: linear-gradient(180deg, rgba(7,11,12,.88), rgba(5,7,7,.86));
+  border-radius: 12px;
+  box-shadow: 0 24px 80px rgba(0,0,0,.55);
+  overflow:hidden;
+}
+
+.termTop{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding: 12px 14px;
+  border-bottom:1px solid var(--line2);
+  color: var(--muted);
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+}
+
+.dot{
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(92,255,178,.12);
+}
+
+.keyBtn{
+  display:inline-flex;
+  gap:8px;
+  align-items:center;
+  border:1px solid var(--line2);
+  background: rgba(0,0,0,.15);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor:pointer;
+  font: inherit;
+}
+
+.keyBtn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.key{
+  font-weight:700;
+  color:#00150d;
+  background: var(--accent);
+  border-radius:6px;
+  padding: 2px 6px;
+}
+
+.termBody{
+  padding: 16px 16px 18px;
+}
+
+.hTitle{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+  font-weight:700;
+  text-transform: lowercase;
+}
+
+.hTitle .dim{
+  color: var(--muted);
+  font-weight:500;
+}
+
+.hr{
+  height:1px;
+  background: linear-gradient(90deg, transparent, var(--line), transparent);
+  margin: 14px 0;
+}
+
+.meta{
+  color: var(--muted);
+  margin: 8px 0 14px;
+}
+
+.alert{
+  margin: 10px 0 14px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,120,120,.16);
+  background: rgba(255,120,120,.07);
+  color: #ffb1b1;
+}
+
+.good{
+  color: var(--accent);
+  font-weight:700;
+}
+
+.toolbarRow {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.bulkActions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 12px;
+}
+
+.navRow{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  color: var(--muted);
+  margin-top: 14px;
+  gap: 12px;
+}
+
+.navBtn{
+  border:none;
+  background: transparent;
+  color: var(--accent);
+  cursor:pointer;
+  font: inherit;
+}
+
+.navBtn:hover{
+  text-decoration: underline;
+}
+
+.navBtn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+  text-decoration: none;
+}
+
+.dangerBtn {
+  color: #ff8f8f;
+}
+
+.kpiRow {
+  display:flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  align-items:center;
+  margin-top: 10px;
+  color: var(--muted);
+}
+
+/* ===== CREATE DIRECTION ===== */
+
+.createDirForm {
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding: 8px 0 12px;
+  flex-wrap:wrap;
+}
+
+.createDirControls {
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  flex:0 0 auto;
+}
+
+.createDirInput {
+  width:260px;
+  height:36px;
+  padding:0 10px;
+  background: rgba(5, 20, 17, 0.8);
+  border: 1px solid rgba(92, 255, 201, 0.15);
+  border-radius: 8px;
+  color: #eafff8;
+  outline: none;
+}
+
+.createDirInput::placeholder {
+  color: rgba(216, 253, 242, 0.45);
+}
+
+.createDirInput:focus {
+  border-color: rgba(92, 255, 201, 0.5);
+  box-shadow: 0 0 10px rgba(92, 255, 201, 0.15);
+}
+
+.createDirBtn {
+  height: 36px;
+  padding: 0 14px;
+  background: rgba(5, 20, 17, 0.9);
+  border: 1px solid rgba(92, 255, 201, 0.15);
+  border-radius: 8px;
+  color: #5cffc9;
+  cursor: pointer;
+}
+
+.createDirBtn:hover:not(:disabled) {
+  border-color: rgba(92, 255, 201, 0.4);
+  box-shadow: 0 0 10px rgba(92, 255, 201, 0.12);
+}
+
+.createDirBtn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ===== TABLE ===== */
+
+.gridWrap{
+  border:1px solid var(--line2);
+  border-radius: 10px;
+  overflow:hidden;
+}
+
+.grid{
+  width:100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.grid th,
+.grid td{
+  border-right:1px solid var(--line2);
+  border-bottom:1px solid var(--line2);
+  padding: 10px 10px;
+  text-align:center;
+  box-sizing:border-box;
+}
+
+.grid th:first-child,
+.grid td:first-child{
+  width: 240px;
+  text-align:left;
+  color: var(--accent);
+}
+
+.grid th{
+  color: var(--muted);
+  font-weight:600;
+}
+
+.grid tr:last-child td{
+  border-bottom:none;
+}
+
+.grid th:last-child,
+.grid td:last-child{
+  border-right:none;
+}
+
+/* ===== TODAY ===== */
+
+.todayHead {
+  background: rgba(92,255,178,.08);
+}
+
+.todayCol {
+  background: rgba(92,255,178,.05);
+}
+
+/* ===== MARK BUTTONS ===== */
+
+.markBtn{
+  width: 44px;
+  height: 34px;
+  border-radius: 8px;
+  border:1px solid var(--line2);
+  background: rgba(0,0,0,.18);
+  color: var(--text);
+  cursor:pointer;
+}
+
+.markBtn.on{
+  border-color: rgba(92,255,178,.55);
+  box-shadow: 0 0 0 3px rgba(92,255,178,.10);
+}
+
+.markBtn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+.markBtn.future {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.markBtn.pending {
+  opacity: .65;
+}
+
+/* ===== FIRST COLUMN ===== */
+
+td.dirCell {
+  position: relative;
+  padding-right: 78px;
+  vertical-align: middle;
+}
+
+td.dirCell > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+td.dirCell > .delBtn {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.dirNameCell {
+  text-align: left;
+  color: var(--accent);
+}
+
+.dirNameCell > span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ===== DELETE BUTTON ===== */
+
+.delBtn {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.2);
+  padding: 3px 8px;
+  border-radius: 10px;
+  cursor: pointer;
+  opacity: .8;
+  color: var(--text);
+}
+
+.delBtn:hover {
+  opacity: 1;
+}
+
+.delBtn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+/* ===== SELECT MODE ===== */
+
+.selectColHead,
+.dirSelectCell {
+  width: 72px;
+  text-align: center;
+}
+
+.selectBtn {
+  width: 54px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(0,0,0,.12);
+  color: var(--accent);
+  cursor: pointer;
+  transition: .18s ease;
+}
+
+.selectBtn.active {
+  border-color: rgba(92,255,178,.55);
+  box-shadow: 0 0 0 3px rgba(92,255,178,.08);
+  background: rgba(92,255,178,.08);
+}
+
+.selectBtn:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
