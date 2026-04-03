@@ -26,7 +26,7 @@ export default function AuthPage({
         <div className="auth-topbar">
           <div className="auth-host">
             <span className="auth-dot" />
-            <span>user@host: ~/tasks</span>
+            <span>tracker@system: ~/login</span>
           </div>
         </div>
 

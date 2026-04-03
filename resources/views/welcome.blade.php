@@ -6,6 +6,7 @@
   @viteReactRefresh
   @vite(['resources/js/app/main.jsx'])
   <title>Tracker</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
 </head>
 <body>
   <div id="app"></div>

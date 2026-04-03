@@ -88,7 +88,7 @@ export default function WeekPage({
           <div className="termTop">
             <div className="badge">
               <span className="dot" />
-              <span>user@host: ~/tasks</span>
+              <span>tracker@system: ~/week</span>
             </div>
 
             <button className="keyBtn" onClick={onLogout} disabled={busy} type="button">
