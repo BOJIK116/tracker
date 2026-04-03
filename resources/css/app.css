@@ -1075,3 +1075,93 @@ td.dirCell > .delBtn {
   opacity: .4;
   cursor: not-allowed;
 }
+
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 10, 8, 0.75);
+  backdrop-filter: blur(6px);
+}
+
+.modalCard {
+  width: 420px;
+  max-width: calc(100% - 32px);
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(
+    180deg,
+    rgba(8, 22, 18, 0.95),
+    rgba(4, 14, 11, 0.98)
+  );
+  border: 1px solid rgba(118, 255, 180, 0.18);
+  box-shadow:
+    0 0 0 1px rgba(118, 255, 180, 0.05) inset,
+    0 20px 60px rgba(0, 0, 0, 0.6),
+    0 0 40px rgba(118, 255, 180, 0.12);
+  animation: modalIn 0.18s ease-out;
+}
+
+.modalTitle {
+  font-size: 18px;
+  font-weight: 600;
+  color: #76ffb4;
+  margin-bottom: 10px;
+}
+
+.modalText {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #9fdcc4;
+  margin-bottom: 20px;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.btn {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn.ghost {
+  background: transparent;
+  border: 1px solid rgba(118, 255, 180, 0.2);
+  color: #9fdcc4;
+}
+
+.btn.ghost:hover {
+  border-color: rgba(118, 255, 180, 0.4);
+  color: #caffdf;
+}
+
+.btn.danger {
+  background: rgba(255, 80, 80, 0.12);
+  border: 1px solid rgba(255, 80, 80, 0.4);
+  color: #ff7a7a;
+}
+
+.btn.danger:hover {
+  background: rgba(255, 80, 80, 0.18);
+  border-color: rgba(255, 80, 80, 0.6);
+  color: #ff9a9a;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

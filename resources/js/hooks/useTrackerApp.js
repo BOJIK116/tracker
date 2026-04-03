@@ -14,9 +14,13 @@ export function useTrackerApp() {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [booting, setBooting] = useState(true)
 
   const [selected, setSelected] = useState(() => getIsoWeek(new Date()))
   const [pending, setPending] = useState(() => new Set())
+
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+  const [directionToDelete, setDirectionToDelete] = useState(null)
 
   const dayLabels = useMemo(() => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], [])
 
@@ -34,7 +38,9 @@ export function useTrackerApp() {
   }
 
   async function reloadWeekOnly(curr = selected) {
-    const weekData = await api(`/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`)
+    const weekData = await api(
+      `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
+    )
     setWeek(weekData)
     loadStreaks().catch(() => {})
   }
@@ -47,7 +53,9 @@ export function useTrackerApp() {
       const meData = await api('/me')
       setMe(meData)
 
-      const weekData = await api(`/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`)
+      const weekData = await api(
+        `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
+      )
       setWeek(weekData)
 
       loadStreaks().catch(() => {})
@@ -64,18 +72,40 @@ export function useTrackerApp() {
 
   useEffect(() => {
     function onKey(e) {
-      if (e.key === 'Escape') logout()
+      if (e.key === 'Escape') {
+        if (confirmDeleteOpen) {
+          cancelDeleteDirection()
+          return
+        }
+
+        logout()
+      }
+
+      if (confirmDeleteOpen) return
+
       if (e.key === 'ArrowLeft') prevWeek()
       if (e.key === 'ArrowRight') nextWeek()
     }
 
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  })
+  }, [confirmDeleteOpen])
 
   useEffect(() => {
-    if (!getToken()) return
-    loadMeAndWeek().catch(() => {})
+    async function init() {
+      if (!getToken()) {
+        setBooting(false)
+        return
+      }
+
+      try {
+        await loadMeAndWeek()
+      } finally {
+        setBooting(false)
+      }
+    }
+
+    init()
   }, [])
 
   useEffect(() => {
@@ -84,40 +114,40 @@ export function useTrackerApp() {
   }, [selected.year, selected.week])
 
   async function login() {
-  setError('')
-  setLoading(true)
+    setError('')
+    setLoading(true)
 
-  try {
-    const data = await api('/login', {
-      method: 'POST',
-      body: { email, password },
-    })
+    try {
+      const data = await api('/login', {
+        method: 'POST',
+        body: { email, password },
+      })
 
-    setToken(data.token)
-    await loadMeAndWeek(selected)
-  } catch (e2) {
-    setError(e2.message)
-    setLoading(false)
+      setToken(data.token)
+      await loadMeAndWeek(selected)
+    } catch (e2) {
+      setError(e2.message)
+      setLoading(false)
+    }
   }
-}
 
-async function register() {
-  setError('')
-  setLoading(true)
+  async function register() {
+    setError('')
+    setLoading(true)
 
-  try {
-    const data = await api('/register', {
-      method: 'POST',
-      body: { email, password, name: email },
-    })
+    try {
+      const data = await api('/register', {
+        method: 'POST',
+        body: { email, password, name: email },
+      })
 
-    setToken(data.token)
-    await loadMeAndWeek(selected)
-  } catch (e2) {
-    setError(e2.message)
-    setLoading(false)
+      setToken(data.token)
+      await loadMeAndWeek(selected)
+    } catch (e2) {
+      setError(e2.message)
+      setLoading(false)
+    }
   }
-}
 
   async function logout() {
     setError('')
@@ -126,7 +156,6 @@ async function register() {
     try {
       await api('/logout', { method: 'POST' })
     } catch {
-      // ignore
     } finally {
       clearToken()
       setMe(null)
@@ -136,21 +165,49 @@ async function register() {
     }
   }
 
-  async function deleteDirection(directionId) {
-    if (!window.confirm('Удалить направление? Все отметки по нему тоже удалятся.')) return
+  function requestDeleteDirection(directionId) {
+    setDirectionToDelete(directionId)
+    setConfirmDeleteOpen(true)
+  }
+
+  function cancelDeleteDirection() {
+    setConfirmDeleteOpen(false)
+    setDirectionToDelete(null)
+  }
+
+  async function confirmDeleteDirection() {
+    if (!directionToDelete) return
 
     setError('')
     setLoading(true)
+    setConfirmDeleteOpen(false)
 
     try {
-      await api(`/directions/${directionId}`, { method: 'DELETE' })
+      await api(`/directions/${directionToDelete}`, { method: 'DELETE' })
       await reloadWeekOnly(selected)
     } catch (e) {
       setError(e.message)
     } finally {
       setLoading(false)
+      setDirectionToDelete(null)
     }
   }
+
+  async function deleteDirection(directionId) {
+  if (!directionId) return
+
+  setError('')
+  setLoading(true)
+
+  try {
+    await api(`/directions/${directionId}`, { method: 'DELETE' })
+    await reloadWeekOnly(selected)
+  } catch (e) {
+    setError(e.message)
+  } finally {
+    setLoading(false)
+  }
+}
 
   async function toggleMark(directionId, isoWeekday, nextValue) {
     if (!week) return
@@ -232,7 +289,14 @@ async function register() {
     prevWeek,
     nextWeek,
     toggleMark,
-    deleteDirection,
     reloadWeekOnly,
+    booting,
+    deleteDirection,
+
+    confirmDeleteOpen,
+    directionToDelete,
+    requestDeleteDirection,
+    cancelDeleteDirection,
+    confirmDeleteDirection,
   }
 }

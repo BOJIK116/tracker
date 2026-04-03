@@ -3,6 +3,7 @@ import CreateDirectionForm from '../components/directions/CreateDirectionForm'
 import WeekGrid from '../components/tracker/WeekGrid'
 import WeekStats from '../components/tracker/WeekStats'
 import { todayStrLocal } from '../lib/date'
+import ConfirmModal from '../components/ConfirmModal'
 
 export default function WeekPage({
   me,
@@ -25,6 +26,7 @@ export default function WeekPage({
 
   const [selectionMode, setSelectionMode] = useState(false)
   const [selectedDirections, setSelectedDirections] = useState([])
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
 
   let doneCells = 0
   let doneToday = 0
@@ -59,11 +61,17 @@ export default function WeekPage({
     )
   }
 
-  async function deleteSelectedDirections() {
+  function requestDeleteSelected() {
     if (!selectedDirections.length) return
+    setConfirmDeleteOpen(true)
+  }
 
-    const ok = window.confirm('Удалить выбранные направления? Все отметки по ним тоже удалятся.')
-    if (!ok) return
+  function cancelDeleteSelected() {
+    setConfirmDeleteOpen(false)
+  }
+
+  async function confirmDeleteSelected() {
+    setConfirmDeleteOpen(false)
 
     for (const directionId of selectedDirections) {
       await onDeleteDirection?.(directionId)
@@ -74,111 +82,121 @@ export default function WeekPage({
   }
 
   return (
-    <div className="container">
-      <div className="term">
-        <div className="termTop">
-          <div className="badge">
-            <span className="dot" />
-            <span>user@host: ~/tasks</span>
+    <>
+      <div className="container">
+        <div className="term">
+          <div className="termTop">
+            <div className="badge">
+              <span className="dot" />
+              <span>user@host: ~/tasks</span>
+            </div>
+
+            <button className="keyBtn" onClick={onLogout} disabled={busy} type="button">
+              <span className="key">ESC</span>
+              <span>logout</span>
+            </button>
           </div>
 
-          <button className="keyBtn" onClick={onLogout} disabled={busy} type="button">
-            <span className="key">ESC</span>
-            <span>logout</span>
-          </button>
-        </div>
+          <div className="termBody">
+            <div className="hTitle">
+              <span>tracker</span>
+              <span className="dim">/ week</span>
+            </div>
 
-        <div className="termBody">
-          <div className="hTitle">
-            <span>tracker</span>
-            <span className="dim">/ week</span>
-          </div>
+            <div className="hr" />
 
-          <div className="hr" />
+            {error ? <div className="alert">{error}</div> : null}
 
-          {error ? <div className="alert">{error}</div> : null}
+            <div className="meta">
+              {'<'} User: <span className="good">{me?.email ?? me?.name}</span>
+              {' >'} • Done today: <span className="good">{doneToday}</span> • Week:{' '}
+              <span className="good">{pct}%</span>
+            </div>
 
-          <div className="meta">
-            {'<'} User: <span className="good">{me?.email ?? me?.name}</span>
-            {' >'} • Done today: <span className="good">{doneToday}</span> • Week:{' '}
-            <span className="good">{pct}%</span>
-          </div>
+            <div className="toolbarRow">
+              <CreateDirectionForm
+                disabled={busy || selectionMode}
+                onCreated={() => {
+                  onReloadWeek?.()
+                }}
+              />
 
-          <div className="toolbarRow">
-            <CreateDirectionForm
-              disabled={busy || selectionMode}
-              onCreated={() => {
-                onReloadWeek?.()
-              }}
-            />
-
-            <div className="bulkActions">
-              {!selectionMode ? (
-                <button
-                  type="button"
-                  className="navBtn"
-                  onClick={startSelectionMode}
-                  disabled={busy}
-                >
-                  Select
-                </button>
-              ) : (
-                <>
-                  <button
-                    type="button"
-                    className="navBtn dangerBtn"
-                    onClick={deleteSelectedDirections}
-                    disabled={busy || !selectedDirections.length}
-                  >
-                    Удалить
-                  </button>
-
+              <div className="bulkActions">
+                {!selectionMode ? (
                   <button
                     type="button"
                     className="navBtn"
-                    onClick={cancelSelectionMode}
+                    onClick={startSelectionMode}
                     disabled={busy}
                   >
-                    Отмена
+                    Select
                   </button>
-                </>
-              )}
+                ) : (
+                  <>
+                    <button
+                      type="button"
+                      className="navBtn dangerBtn"
+                      onClick={requestDeleteSelected}
+                      disabled={busy || !selectedDirections.length}
+                    >
+                      Delete
+                    </button>
+
+                    <button
+                      type="button"
+                      className="navBtn"
+                      onClick={cancelSelectionMode}
+                      disabled={busy}
+                    >
+                      Cancel
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
+
+            <WeekGrid
+              week={week}
+              dayLabels={dayLabels}
+              pending={pending}
+              busy={busy}
+              onToggle={onToggle}
+              selectionMode={selectionMode}
+              selectedDirections={selectedDirections}
+              onToggleDirectionSelection={toggleDirectionSelection}
+            />
+
+            <div className="navRow">
+              <button className="navBtn" onClick={onPrev} disabled={busy} type="button">
+                &lt;&lt; PREV
+              </button>
+
+              <div>{rangeLabel}</div>
+
+              <button className="navBtn" onClick={onNext} disabled={busy} type="button">
+                NEXT &gt;&gt;
+              </button>
+            </div>
+
+            <WeekStats
+              week={week}
+              doneCells={doneCells}
+              totalCells={totalCells}
+              pct={pct}
+              doneToday={doneToday}
+              streaks={streaks}
+            />
           </div>
-
-          <WeekGrid
-            week={week}
-            dayLabels={dayLabels}
-            pending={pending}
-            busy={busy}
-            onToggle={onToggle}
-            selectionMode={selectionMode}
-            selectedDirections={selectedDirections}
-            onToggleDirectionSelection={toggleDirectionSelection}
-          />
-
-          <div className="navRow">
-            <button className="navBtn" onClick={onPrev} disabled={busy} type="button">
-              &lt;&lt; PREV
-            </button>
-
-            <div>{rangeLabel}</div>
-
-            <button className="navBtn" onClick={onNext} disabled={busy} type="button">
-              NEXT &gt;&gt;
-            </button>
-          </div>
-
-          <WeekStats
-            week={week}
-            doneCells={doneCells}
-            totalCells={totalCells}
-            pct={pct}
-            doneToday={doneToday}
-            streaks={streaks}
-          />
         </div>
       </div>
-    </div>
+
+      {confirmDeleteOpen && (
+        <ConfirmModal
+          count={selectedDirections.length}
+          onCancel={cancelDeleteSelected}
+          onConfirm={confirmDeleteSelected}
+        />
+      )}
+    </>
   )
 }

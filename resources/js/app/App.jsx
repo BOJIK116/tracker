@@ -5,6 +5,32 @@ import { useTrackerApp } from '../hooks/useTrackerApp'
 
 export default function App() {
   const tracker = useTrackerApp()
+  const { booting } = tracker
+
+  if (booting) {
+    return (
+      <div className="container">
+        <div className="term">
+          <div className="termTop">
+            <div className="badge">
+              <span className="dot" />
+              <span>user@host: ~/tasks</span>
+            </div>
+          </div>
+
+          <div className="termBody">
+            <div className="hTitle">
+              <span>tracker</span>
+              <span className="dim">/ loading</span>
+            </div>
+
+            <div className="hr" />
+            <div className="meta">Loading…</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   if (!tracker.me) {
     return (
@@ -19,7 +45,6 @@ export default function App() {
         error={tracker.error}
         onLogin={tracker.login}
         onRegister={tracker.register}
-      
       />
     )
   }
@@ -75,5 +100,4 @@ export default function App() {
       onDeleteDirection={tracker.deleteDirection}
     />
   )
-
 }
