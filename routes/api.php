@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\DirectionController;
 use App\Http\Controllers\Api\TrackerWeekController;
 use App\Http\Controllers\Api\TrackerMarkController;
 use App\Http\Controllers\Api\TrackerStreaksController;
+use App\Http\Controllers\Api\NoteController;
 
 Route::get('/ping', fn () => ['ok' => true]);
 
@@ -20,9 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/tracker/mark', TrackerMarkController::class);
     Route::get('/tracker/streaks', TrackerStreaksController::class);
 
-    Route::get('/directions', [DirectionController::class, 'index']);
-    Route::post('/directions', [DirectionController::class, 'store']);
-    Route::delete('/directions/{direction}', [DirectionController::class, 'destroy']);
-
+    Route::apiResource('directions', DirectionController::class)
+    ->only(['index', 'store', 'destroy']);
+    Route::apiResource('notes', NoteController::class);
 });
 
