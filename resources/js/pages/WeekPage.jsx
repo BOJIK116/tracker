@@ -4,10 +4,12 @@ import WeekGrid from '../components/tracker/WeekGrid'
 import WeekStats from '../components/tracker/WeekStats'
 import { todayStrLocal } from '../lib/date'
 import ConfirmModal from '../components/ConfirmModal'
+import NotesPanel from '../components/notes/NotesPanel'
 
 export default function WeekPage({
   me,
   week,
+  notes,
   dayLabels,
   busy,
   error,
@@ -19,7 +21,10 @@ export default function WeekPage({
   pending,
   streaks,
   onReloadWeek,
+  onCreateNote,
   onDeleteDirection,
+  onDeleteNote,
+  onUpdateNote,
 }) {
   const today = todayStrLocal()
   const totalCells = week.rows.length * week.days.length
@@ -179,13 +184,23 @@ export default function WeekPage({
             </div>
 
             <WeekStats
-              week={week}
-              doneCells={doneCells}
-              totalCells={totalCells}
-              pct={pct}
-              doneToday={doneToday}
-              streaks={streaks}
-            />
+  week={week}
+  doneCells={doneCells}
+  totalCells={totalCells}
+  pct={pct}
+  doneToday={doneToday}
+  streaks={streaks}
+/>
+
+<div className="hr" />
+
+<NotesPanel
+  notes={notes}
+  busy={busy}
+  onCreateNote={onCreateNote}
+  onDeleteNote={onDeleteNote}
+  onUpdateNote={onUpdateNote}
+/>
           </div>
         </div>
       </div>

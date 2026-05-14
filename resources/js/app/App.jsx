@@ -86,6 +86,7 @@ export default function App() {
     <WeekPage
       me={tracker.me}
       week={tracker.week}
+      notes={tracker.notes}
       dayLabels={tracker.dayLabels}
       busy={tracker.loading}
       error={tracker.error}
@@ -98,6 +99,9 @@ export default function App() {
       streaks={tracker.streaks}
       onReloadWeek={() => tracker.reloadWeekOnly(tracker.selected)}
       onDeleteDirection={tracker.deleteDirection}
+      onCreateNote={tracker.onCreateNote}
+      onDeleteNote={tracker.onDeleteNote}
+      onUpdateNote={tracker.onUpdateNote}
     />
   )
 }

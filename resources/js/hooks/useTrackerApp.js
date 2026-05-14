@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
-import { api } from '../lib/api'
 import { clearToken, getToken, setToken } from '../lib/auth'
 import { getIsoWeek, isFutureDate, shiftIsoWeek } from '../lib/date'
+import { api, getNotes, createNote, deleteNote, updateNote } from '../lib/api'
 
 export function useTrackerApp() {
   const [mode, setMode] = useState('login')
@@ -11,6 +11,7 @@ export function useTrackerApp() {
   const [me, setMe] = useState(null)
   const [week, setWeek] = useState(null)
   const [streaks, setStreaks] = useState(null)
+  const [notes, setNotes] = useState([])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -37,12 +38,46 @@ export function useTrackerApp() {
     setStreaks(data)
   }
 
+  async function loadNotes() {
+  const data = await getNotes()
+
+  console.log('loaded notes:', data)
+
+  setNotes(Array.isArray(data) ? data : [])
+  }
+
+  async function handleCreateNote(data) {
+  const newNote = await createNote(data)
+
+  setNotes((prev) => [newNote, ...prev])
+
+  return newNote
+  }
+
+  async function handleDeleteNote(id) {
+  await deleteNote(id)
+
+  setNotes((prev) => prev.filter((note) => note.id !== id))
+  }
+
+  async function handleUpdateNote(id, data) {
+  const updatedNote = await updateNote(id, data)
+
+  setNotes((prev) =>
+    prev.map((note) => (note.id === updatedNote.id ? updatedNote : note))
+  )
+
+  return updatedNote
+  }
+
   async function reloadWeekOnly(curr = selected) {
     const weekData = await api(
       `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
     )
     setWeek(weekData)
     loadStreaks().catch(() => {})
+    
+    loadNotes().catch(() => {})
   }
 
   async function loadMeAndWeek(curr = selected) {
@@ -59,6 +94,7 @@ export function useTrackerApp() {
       setWeek(weekData)
 
       loadStreaks().catch(() => {})
+      loadNotes().catch(() => {})
     } catch (e) {
       clearToken()
       setMe(null)
@@ -298,5 +334,10 @@ export function useTrackerApp() {
     requestDeleteDirection,
     cancelDeleteDirection,
     confirmDeleteDirection,
+    notes,
+    loadNotes,
+    onCreateNote: handleCreateNote,
+    onDeleteNote: handleDeleteNote,
+    onUpdateNote: handleUpdateNote,
   }
 }

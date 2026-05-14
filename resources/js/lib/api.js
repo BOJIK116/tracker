@@ -29,4 +29,29 @@ export async function api(path, { method = 'GET', body } = {}) {
   }
 
   return data
+
+}
+
+export function getNotes() {
+  return api('/notes')
+}
+
+export function createNote(data) {
+  return api('/notes', {
+    method: 'POST',
+    body: data,
+  })
+}
+
+export function updateNote(id, data) {
+  return api(`/notes/${id}`, {
+    method: 'PUT',
+    body: data,
+  })
+}
+
+export function deleteNote(id) {
+  return api(`/notes/${id}`, {
+    method: 'DELETE',
+  })
 }
