@@ -1165,3 +1165,71 @@ td.dirCell > .delBtn {
     transform: translateY(0) scale(1);
   }
 }
+
+/* ===== NOTES ===== */
+
+.notesBox {
+  margin-top: 18px;
+  padding-top: 14px;
+}
+
+.noteForm {
+  display: grid;
+  gap: 10px;
+  max-width: 520px;
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.noteInput,
+.noteTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 20, 14, 0.65);
+  border: 1px solid rgba(92, 255, 176, 0.22);
+  color: #d9efe7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  outline: none;
+}
+
+.noteInput::placeholder,
+.noteTextarea::placeholder {
+  color: rgba(217, 239, 231, 0.45);
+}
+
+.noteInput:focus,
+.noteTextarea:focus {
+  border-color: rgba(92, 255, 176, 0.65);
+}
+
+.noteTextarea {
+  min-height: 76px;
+  resize: vertical;
+}
+
+.notesList {
+  display: grid;
+  gap: 10px;
+  max-width: 620px;
+}
+
+.noteItem {
+  padding: 10px 12px;
+  border: 1px solid rgba(92, 255, 176, 0.18);
+  border-radius: 10px;
+  background: rgba(0, 18, 13, 0.45);
+  overflow-wrap: anywhere;
+}
+
+.noteItem .dim {
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.noteActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}

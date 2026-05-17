@@ -83,23 +83,25 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
 
               {note.content ? <div className="dim">{note.content}</div> : null}
 
-              <button
-                className="navBtn"
-                type="button"
-                disabled={busy}
-                onClick={() => startEdit(note)}
-              >
-                Edit
-              </button>
+              <div className="noteActions">
+  <button
+    className="navBtn"
+    type="button"
+    disabled={busy}
+    onClick={() => startEdit(note)}
+  >
+    Edit
+  </button>
 
-              <button
-                className="navBtn dangerBtn"
-                type="button"
-                disabled={busy}
-                onClick={() => onDeleteNote?.(note.id)}
-              >
-                Delete
-              </button>
+  <button
+    className="navBtn dangerBtn"
+    type="button"
+    disabled={busy}
+    onClick={() => onDeleteNote?.(note.id)}
+  >
+    Delete
+  </button>
+</div>
             </div>
           ))
         ) : (
