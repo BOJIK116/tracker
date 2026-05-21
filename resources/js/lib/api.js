@@ -55,3 +55,27 @@ export function deleteNote(id) {
     method: 'DELETE',
   })
 }
+
+export function getTodos() {
+  return api('/todos')
+}
+
+export function createTodo(data) {
+  return api('/todos', {
+    method: 'POST',
+    body: data,
+  })
+}
+
+export function updateTodo(id, data) {
+  return api(`/todos/${id}`, {
+    method: 'PATCH',
+    body: data,
+  })
+}
+
+export function deleteTodo(id) {
+  return api(`/todos/${id}`, {
+    method: 'DELETE',
+  })
+}

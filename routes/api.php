@@ -7,6 +7,8 @@ use App\Http\Controllers\Api\TrackerWeekController;
 use App\Http\Controllers\Api\TrackerMarkController;
 use App\Http\Controllers\Api\TrackerStreaksController;
 use App\Http\Controllers\Api\NoteController;
+use App\Http\Controllers\Api\TodoController;
+
 
 Route::get('/ping', fn () => ['ok' => true]);
 
@@ -24,5 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('directions', DirectionController::class)
     ->only(['index', 'store', 'destroy']);
     Route::apiResource('notes', NoteController::class);
+
+    Route::apiResource('todos', TodoController::class);
 });
 
