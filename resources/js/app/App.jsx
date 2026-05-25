@@ -102,6 +102,10 @@ export default function App() {
       onCreateNote={tracker.onCreateNote}
       onDeleteNote={tracker.onDeleteNote}
       onUpdateNote={tracker.onUpdateNote}
+      todos={tracker.todos}
+      onCreateTodo={tracker.onCreateTodo}
+      onToggleTodo={tracker.onToggleTodo}
+      onDeleteTodo={tracker.onDeleteTodo}
     />
   )
 }

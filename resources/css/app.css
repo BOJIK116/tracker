@@ -1233,3 +1233,60 @@ td.dirCell > .delBtn {
   gap: 8px;
   margin-top: 10px;
 }
+
+.sidePanels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.sidePanels .notesBox,
+.sidePanels .todosBox {
+  min-width: 0;
+}
+
+.todoForm,
+.todosList {
+  display: grid;
+  gap: 10px;
+}
+
+.todoItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-wrap: anywhere;
+}
+
+.todoItem span {
+  flex: 1;
+}
+
+@media (max-width: 900px) {
+  .sidePanels {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sidePanels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.sidePanels .notesBox,
+.sidePanels .todosBox {
+  margin-top: 0;
+  padding-top: 0;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .sidePanels {
+    grid-template-columns: 1fr;
+  }
+}

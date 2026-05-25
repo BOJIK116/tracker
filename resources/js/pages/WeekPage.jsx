@@ -5,6 +5,7 @@ import WeekStats from '../components/tracker/WeekStats'
 import { todayStrLocal } from '../lib/date'
 import ConfirmModal from '../components/ConfirmModal'
 import NotesPanel from '../components/notes/NotesPanel'
+import TodoPanel from '../components/todos/TodoPanel'
 
 export default function WeekPage({
   me,
@@ -25,6 +26,10 @@ export default function WeekPage({
   onDeleteDirection,
   onDeleteNote,
   onUpdateNote,
+  todos,
+  onCreateTodo,
+  onToggleTodo,
+  onDeleteTodo,
 }) {
   const today = todayStrLocal()
   const totalCells = week.rows.length * week.days.length
@@ -194,13 +199,23 @@ export default function WeekPage({
 
 <div className="hr" />
 
-<NotesPanel
-  notes={notes}
-  busy={busy}
-  onCreateNote={onCreateNote}
-  onDeleteNote={onDeleteNote}
-  onUpdateNote={onUpdateNote}
-/>
+<div className="sidePanels">
+  <NotesPanel
+    notes={notes}
+    busy={busy}
+    onCreateNote={onCreateNote}
+    onDeleteNote={onDeleteNote}
+    onUpdateNote={onUpdateNote}
+  />
+
+  <TodoPanel
+    todos={todos}
+    busy={busy}
+    onCreateTodo={onCreateTodo}
+    onToggleTodo={onToggleTodo}
+    onDeleteTodo={onDeleteTodo}
+  />
+            </div>
           </div>
         </div>
       </div>
