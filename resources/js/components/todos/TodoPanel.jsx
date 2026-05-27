@@ -60,7 +60,6 @@ export default function TodoPanel({ todos = [], busy, onCreateTodo, onToggleTodo
   {todo.title}
 </span>
 
-              <span className={todo.is_done ? 'dim' : 'good'}>{todo.title}</span>
 
               <button
                 className="navBtn dangerBtn"
