@@ -1290,3 +1290,146 @@ td.dirCell > .delBtn {
     grid-template-columns: 1fr;
   }
 }
+
+/* ===== PANELS: NOTES / TODO ===== */
+
+.sidePanels {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+.sidePanels .notesBox,
+.sidePanels .todosBox {
+  min-width: 0;
+  margin-top: 0;
+  padding: 14px;
+  border: 1px solid rgba(92, 255, 176, 0.14);
+  border-radius: 12px;
+  background: rgba(0, 18, 13, 0.18);
+}
+
+.panelHead {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.smallTitle {
+  font-size: 16px;
+}
+
+.noteForm,
+.todoForm {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.noteInput,
+.noteTextarea {
+  width: 100%;
+  box-sizing: border-box;
+  background: rgba(0, 20, 14, 0.65);
+  border: 1px solid rgba(92, 255, 176, 0.22);
+  color: #d9efe7;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font: inherit;
+  outline: none;
+}
+
+.noteInput::placeholder,
+.noteTextarea::placeholder {
+  color: rgba(217, 239, 231, 0.45);
+}
+
+.noteInput:focus,
+.noteTextarea:focus {
+  border-color: rgba(92, 255, 176, 0.65);
+}
+
+.noteTextarea {
+  min-height: 80px;
+  max-height: 160px;
+  resize: vertical;
+}
+
+.noteForm .navBtn,
+.todoForm .navBtn {
+  justify-self: end;
+}
+
+.notesList,
+.todosList {
+  display: grid;
+  gap: 10px;
+}
+
+.noteItem,
+.todoItem {
+  border: 1px solid rgba(92, 255, 176, 0.14);
+  border-radius: 10px;
+  background: rgba(0, 18, 13, 0.28);
+}
+
+.noteItem {
+  padding: 10px 12px;
+  overflow-wrap: anywhere;
+}
+
+.noteItem .dim {
+  margin-top: 4px;
+  line-height: 1.45;
+}
+
+.noteActions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.todoItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+}
+
+.todoCheck {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(92, 255, 176, 0.35);
+  border-radius: 999px;
+  background: rgba(0, 20, 14, 0.45);
+  color: #5cffb0;
+  cursor: pointer;
+  font: inherit;
+  line-height: 1;
+}
+
+.todoCheck.done {
+  background: rgba(92, 255, 176, 0.12);
+  border-color: rgba(92, 255, 176, 0.75);
+}
+
+.todoTitle {
+  color: #d9efe7;
+  overflow-wrap: anywhere;
+}
+
+.todoTitle.done {
+  color: rgba(217, 239, 231, 0.45);
+  text-decoration: line-through;
+}
+
+@media (max-width: 900px) {
+  .sidePanels {
+    grid-template-columns: 1fr;
+  }
+}

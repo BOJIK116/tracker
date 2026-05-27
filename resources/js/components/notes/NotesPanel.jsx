@@ -43,9 +43,14 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
 
   return (
     <div className="notesBox">
-      <div className="meta">
-        Notes loaded: <span className="good">{notes.length}</span>
-      </div>
+      <div className="panelHead">
+  <div className="hTitle smallTitle">
+    <span>notes</span>
+    <span className="dim">/ list</span>
+  </div>
+
+  <div className="dim">{notes.length} items</div>
+</div>
 
       <form className="noteForm" onSubmit={handleSubmit}>
         <input
