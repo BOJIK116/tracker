@@ -1433,3 +1433,34 @@ td.dirCell > .delBtn {
     grid-template-columns: 1fr;
   }
 }
+
+.noteContent {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.noteContent {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.noteContent.collapsed {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.inlineBtn {
+  margin-top: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #5cffb0;
+  font: inherit;
+  cursor: pointer;
+}
+
+.inlineBtn:hover {
+  text-decoration: underline;
+}

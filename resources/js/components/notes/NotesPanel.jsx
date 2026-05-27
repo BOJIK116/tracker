@@ -4,6 +4,7 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [editingId, setEditingId] = useState(null)
+  const [expandedNotes, setExpandedNotes] = useState(() => new Set())
 
   function startEdit(note) {
     setEditingId(note.id)
@@ -16,6 +17,20 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
     setTitle('')
     setContent('')
   }
+
+  function toggleExpanded(noteId) {
+  setExpandedNotes((prev) => {
+    const next = new Set(prev)
+
+    if (next.has(noteId)) {
+      next.delete(noteId)
+    } else {
+      next.add(noteId)
+    }
+
+    return next
+  })
+}
 
   async function handleSubmit(e) {
   e.preventDefault()
@@ -86,7 +101,23 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
             <div className="noteItem" key={note.id}>
               <div className="good">{note.title}</div>
 
-              {note.content ? <div className="dim">{note.content}</div> : null}
+              {note.content ? (
+  <>
+    <div className={expandedNotes.has(note.id) ? 'dim noteContent' : 'dim noteContent collapsed'}>
+      {note.content}
+    </div>
+
+    {note.content.length > 120 ? (
+      <button
+        className="inlineBtn"
+        type="button"
+        onClick={() => toggleExpanded(note.id)}
+      >
+        {expandedNotes.has(note.id) ? 'Show less' : 'Show more'}
+      </button>
+    ) : null}
+  </>
+) : null}
 
               <div className="noteActions">
   <button
