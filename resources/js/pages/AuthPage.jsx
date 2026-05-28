@@ -95,13 +95,13 @@ export default function AuthPage({
   );
   function handleSubmit(e) {
   e.preventDefault();
-  console.log("submit", { mode, email, password });
 
   if (mode === "login") {
-    console.log("calling onLogin");
+
     onLogin();
+  
   } else {
-    console.log("calling onRegister");
+
     onRegister();
   }
 }
