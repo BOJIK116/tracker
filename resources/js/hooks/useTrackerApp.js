@@ -27,8 +27,25 @@ export function useTrackerApp() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [booting, setBooting] = useState(true)
+  const SELECTED_WEEK_KEY = 'tracker_selected_week'
 
-  const [selected, setSelected] = useState(() => getIsoWeek(new Date()))
+  const [selected, setSelected] = useState(() => {
+  try {
+    const saved = localStorage.getItem(SELECTED_WEEK_KEY)
+
+    if (saved) {
+      const parsed = JSON.parse(saved)
+
+      if (parsed?.year && parsed?.week) {
+        return parsed
+      }
+    }
+  } catch {
+  }
+
+  return getIsoWeek(new Date())
+  })
+
   const [pending, setPending] = useState(() => new Set())
 
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
@@ -204,6 +221,11 @@ export function useTrackerApp() {
 
     loadMeAndWeek(selected).catch(() => {})
   }, [selected.year, selected.week])
+
+  useEffect(() => {
+  localStorage.setItem(SELECTED_WEEK_KEY, JSON.stringify(selected))
+  }, [selected.year, selected.week])
+
 
   async function login() {
     setError('')
