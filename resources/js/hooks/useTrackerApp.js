@@ -1,7 +1,8 @@
 import { useEffect, useMemo, useState } from 'react'
 import { clearToken, getToken, setToken } from '../lib/auth'
 import { getIsoWeek, isFutureDate, shiftIsoWeek } from '../lib/date'
-import { api,
+import {
+  api,
   getNotes,
   createNote,
   deleteNote,
@@ -9,7 +10,8 @@ import { api,
   getTodos,
   createTodo,
   updateTodo,
-  deleteTodo, } from '../lib/api'
+  deleteTodo,
+} from '../lib/api'
 
 export function useTrackerApp() {
   const [mode, setMode] = useState('login')
@@ -33,7 +35,7 @@ export function useTrackerApp() {
   const [directionToDelete, setDirectionToDelete] = useState(null)
 
   const dayLabels = useMemo(() => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], [])
-  
+
   function prevWeek() {
     setSelected((s) => shiftIsoWeek(s.year, s.week, -1))
   }
@@ -48,78 +50,76 @@ export function useTrackerApp() {
   }
 
   async function loadNotes() {
-  const data = await getNotes()
+    const data = await getNotes()
 
-  console.log('loaded notes:', data)
-
-  setNotes(Array.isArray(data) ? data : [])
+    setNotes(Array.isArray(data) ? data : [])
   }
 
   async function loadTodos() {
-  const data = await getTodos()
-  setTodos(Array.isArray(data) ? data : [])
+    const data = await getTodos()
+
+    setTodos(Array.isArray(data) ? data : [])
   }
 
   async function handleCreateNote(data) {
-  const newNote = await createNote(data)
+    const newNote = await createNote(data)
 
-  setNotes((prev) => [newNote, ...prev])
+    setNotes((prev) => [newNote, ...prev])
 
-  return newNote
+    return newNote
   }
 
   async function handleDeleteNote(id) {
-  await deleteNote(id)
+    await deleteNote(id)
 
-  setNotes((prev) => prev.filter((note) => note.id !== id))
+    setNotes((prev) => prev.filter((note) => note.id !== id))
   }
 
   async function handleUpdateNote(id, data) {
-  const updatedNote = await updateNote(id, data)
+    const updatedNote = await updateNote(id, data)
 
-  setNotes((prev) =>
-    prev.map((note) => (note.id === updatedNote.id ? updatedNote : note))
-  )
+    setNotes((prev) =>
+      prev.map((note) => (note.id === updatedNote.id ? updatedNote : note))
+    )
 
-  return updatedNote
+    return updatedNote
   }
 
   async function handleCreateTodo(data) {
-  const newTodo = await createTodo(data)
+    const newTodo = await createTodo(data)
 
-  setTodos((prev) => [newTodo, ...prev])
+    setTodos((prev) => [newTodo, ...prev])
 
-  return newTodo
-}
+    return newTodo
+  }
 
-async function handleToggleTodo(todo) {
-  const updatedTodo = await updateTodo(todo.id, {
-    is_done: !todo.is_done,
-  })
+  async function handleToggleTodo(todo) {
+    const updatedTodo = await updateTodo(todo.id, {
+      is_done: !todo.is_done,
+    })
 
-  setTodos((prev) =>
-    prev.map((item) => (item.id === updatedTodo.id ? updatedTodo : item))
-  )
+    setTodos((prev) =>
+      prev.map((item) => (item.id === updatedTodo.id ? updatedTodo : item))
+    )
 
-  return updatedTodo
-}
+    return updatedTodo
+  }
 
-async function handleDeleteTodo(id) {
-  await deleteTodo(id)
+  async function handleDeleteTodo(id) {
+    await deleteTodo(id)
 
-  setTodos((prev) => prev.filter((todo) => todo.id !== id))
-}
+    setTodos((prev) => prev.filter((todo) => todo.id !== id))
+  }
 
   async function reloadWeekOnly(curr = selected) {
     const weekData = await api(
       `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
     )
-    setWeek(weekData)
-    
-    loadStreaks().catch(() => {})
-    
-    loadNotes().catch(() => {})
 
+    setWeek(weekData)
+
+    loadStreaks().catch(() => {})
+    loadNotes().catch(() => {})
     loadTodos().catch(() => {})
   }
 
@@ -134,15 +134,19 @@ async function handleDeleteTodo(id) {
       const weekData = await api(
         `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
       )
+
       setWeek(weekData)
 
       loadStreaks().catch(() => {})
       loadNotes().catch(() => {})
+      loadTodos().catch(() => {})
     } catch (e) {
       clearToken()
       setMe(null)
       setWeek(null)
       setStreaks(null)
+      setNotes([])
+      setTodos([])
       setError(e.message)
     } finally {
       setLoading(false)
@@ -167,6 +171,7 @@ async function handleDeleteTodo(id) {
     }
 
     window.addEventListener('keydown', onKey)
+
     return () => window.removeEventListener('keydown', onKey)
   }, [confirmDeleteOpen])
 
@@ -189,6 +194,14 @@ async function handleDeleteTodo(id) {
 
   useEffect(() => {
     if (!me) return
+
+    loadNotes().catch(() => {})
+    loadTodos().catch(() => {})
+  }, [me])
+
+  useEffect(() => {
+    if (!me) return
+
     loadMeAndWeek(selected).catch(() => {})
   }, [selected.year, selected.week])
 
@@ -240,6 +253,8 @@ async function handleDeleteTodo(id) {
       setMe(null)
       setWeek(null)
       setStreaks(null)
+      setNotes([])
+      setTodos([])
       setLoading(false)
     }
   }
@@ -273,20 +288,20 @@ async function handleDeleteTodo(id) {
   }
 
   async function deleteDirection(directionId) {
-  if (!directionId) return
+    if (!directionId) return
 
-  setError('')
-  setLoading(true)
+    setError('')
+    setLoading(true)
 
-  try {
-    await api(`/directions/${directionId}`, { method: 'DELETE' })
-    await reloadWeekOnly(selected)
-  } catch (e) {
-    setError(e.message)
-  } finally {
-    setLoading(false)
+    try {
+      await api(`/directions/${directionId}`, { method: 'DELETE' })
+      await reloadWeekOnly(selected)
+    } catch (e) {
+      setError(e.message)
+    } finally {
+      setLoading(false)
+    }
   }
-}
 
   async function toggleMark(directionId, isoWeekday, nextValue) {
     if (!week) return
@@ -308,6 +323,7 @@ async function handleDeleteTodo(id) {
         if (r.direction.id !== directionId) return r
 
         const statuses = { ...(r.statuses || {}) }
+
         statuses[String(isoWeekday)] = !!nextValue
         statuses[isoWeekday] = !!nextValue
 
@@ -334,7 +350,9 @@ async function handleDeleteTodo(id) {
     } finally {
       setPending((prev) => {
         const next = new Set(prev)
+
         next.delete(pKey)
+
         return next
       })
     }
@@ -343,6 +361,7 @@ async function handleDeleteTodo(id) {
   const rangeLabel = (() => {
     const from = week?.days?.[0]?.date ?? ''
     const to = week?.days?.[6]?.date ?? ''
+
     return from && to ? `${from} — ${to}` : week ? `ISO ${week.year} / week ${week.week}` : ''
   })()
 
@@ -353,36 +372,42 @@ async function handleDeleteTodo(id) {
     setEmail,
     password,
     setPassword,
+
     me,
     week,
     streaks,
+    notes,
+    todos,
+
     loading,
     error,
     selected,
     pending,
     dayLabels,
     rangeLabel,
+    booting,
+
     login,
     register,
     logout,
+
     prevWeek,
     nextWeek,
     toggleMark,
     reloadWeekOnly,
-    booting,
-    deleteDirection,
 
+    deleteDirection,
     confirmDeleteOpen,
     directionToDelete,
     requestDeleteDirection,
     cancelDeleteDirection,
     confirmDeleteDirection,
-    notes,
+
     loadNotes,
     onCreateNote: handleCreateNote,
     onDeleteNote: handleDeleteNote,
     onUpdateNote: handleUpdateNote,
-    todos,
+
     loadTodos,
     onCreateTodo: handleCreateTodo,
     onToggleTodo: handleToggleTodo,

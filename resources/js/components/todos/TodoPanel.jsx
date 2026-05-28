@@ -1,32 +1,71 @@
 import React, { useState } from 'react'
 
-export default function TodoPanel({ todos = [], busy, onCreateTodo, onToggleTodo, onDeleteTodo }) {
+export default function TodoPanel({
+  todos = [],
+  busy,
+  onCreateTodo,
+  onToggleTodo,
+  onDeleteTodo,
+}) {
   const [title, setTitle] = useState('')
+  const [showCompleted, setShowCompleted] = useState(false)
 
- async function handleSubmit(e) {
-  e.preventDefault()
+  const activeTodos = todos.filter((todo) => !todo.is_done)
+  const completedTodos = todos.filter((todo) => todo.is_done)
 
-  console.log('submit todo:', title)
+  async function handleSubmit(e) {
+    e.preventDefault()
 
-  if (!title.trim()) return
+    const trimmedTitle = title.trim()
 
-  await onCreateTodo?.({
-    title: title.trim(),
-  })
+    if (!trimmedTitle) return
 
-  setTitle('')
-}
+    await onCreateTodo?.({
+      title: trimmedTitle,
+    })
+
+    setTitle('')
+  }
+
+  function renderTodo(todo) {
+    return (
+      <div className="todoItem" key={todo.id}>
+        <button
+          className={todo.is_done ? 'todoCheck done' : 'todoCheck'}
+          type="button"
+          disabled={busy}
+          onClick={() => onToggleTodo?.(todo)}
+          title={todo.is_done ? 'Mark as not done' : 'Mark as done'}
+        >
+          {todo.is_done ? '✓' : '○'}
+        </button>
+
+        <span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>
+          {todo.title}
+        </span>
+
+        <button
+          className="navBtn dangerBtn"
+          type="button"
+          disabled={busy}
+          onClick={() => onDeleteTodo?.(todo.id)}
+        >
+          Delete
+        </button>
+      </div>
+    )
+  }
 
   return (
     <div className="todosBox">
       <div className="panelHead">
-  <div className="hTitle smallTitle">
-    <span>todo</span>
-    <span className="dim">/ list</span>
-  </div>
+        <div className="hTitle smallTitle">
+          <span>todo</span>
+          <span className="dim">/ list</span>
+        </div>
 
-  <div className="dim">{todos.length} tasks</div>
-</div>
+        <div className="dim">{activeTodos.length} active</div>
+      </div>
 
       <form className="todoForm" onSubmit={handleSubmit}>
         <input
@@ -43,37 +82,32 @@ export default function TodoPanel({ todos = [], busy, onCreateTodo, onToggleTodo
       </form>
 
       <div className="todosList">
-        {todos.length ? (
-          todos.map((todo) => (
-            <div className="todoItem" key={todo.id}>
-              <button
-  className={todo.is_done ? 'todoCheck done' : 'todoCheck'}
-  type="button"
-  disabled={busy}
-  onClick={() => onToggleTodo?.(todo)}
-  title={todo.is_done ? 'Mark as not done' : 'Mark as done'}
->
-  {todo.is_done ? '✓' : '○'}
-</button>
-
-<span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>
-  {todo.title}
-</span>
-
-
-              <button
-                className="navBtn dangerBtn"
-                type="button"
-                disabled={busy}
-                onClick={() => onDeleteTodo?.(todo.id)}
-              >
-                Delete
-              </button>
-            </div>
-          ))
+        {activeTodos.length ? (
+          activeTodos.map(renderTodo)
         ) : (
-          <div className="dim">No todos yet</div>
+          <div className="dim">No active todos</div>
         )}
+
+        {completedTodos.length ? (
+          <button
+            className="inlineBtn"
+            type="button"
+            disabled={busy}
+            onClick={() => setShowCompleted((value) => !value)}
+          >
+            {showCompleted
+              ? 'Hide completed'
+              : `Show completed (${completedTodos.length})`}
+          </button>
+        ) : null}
+
+        {showCompleted && completedTodos.length ? (
+          <div className="completedTodos">
+            <div className="dim">completed</div>
+
+            {completedTodos.map(renderTodo)}
+          </div>
+        ) : null}
       </div>
     </div>
   )

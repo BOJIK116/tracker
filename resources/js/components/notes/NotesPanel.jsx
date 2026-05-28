@@ -1,10 +1,22 @@
 import React, { useState } from 'react'
 
-export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNote,  onUpdateNote }) {
+export default function NotesPanel({
+  notes = [],
+  busy,
+  onCreateNote,
+  onDeleteNote,
+  onUpdateNote,
+}) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [expandedNotes, setExpandedNotes] = useState(() => new Set())
+
+  function resetForm() {
+    setEditingId(null)
+    setTitle('')
+    setContent('')
+  }
 
   function startEdit(note) {
     setEditingId(note.id)
@@ -12,60 +24,52 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
     setContent(note.content ?? '')
   }
 
-  function cancelEdit() {
-    setEditingId(null)
-    setTitle('')
-    setContent('')
-  }
-
   function toggleExpanded(noteId) {
-  setExpandedNotes((prev) => {
-    const next = new Set(prev)
+    setExpandedNotes((prev) => {
+      const next = new Set(prev)
 
-    if (next.has(noteId)) {
-      next.delete(noteId)
-    } else {
-      next.add(noteId)
-    }
+      if (next.has(noteId)) {
+        next.delete(noteId)
+      } else {
+        next.add(noteId)
+      }
 
-    return next
-  })
-}
+      return next
+    })
+  }
 
   async function handleSubmit(e) {
-  e.preventDefault()
+    e.preventDefault()
 
-  if (!title.trim()) return
+    const trimmedTitle = title.trim()
 
-  const payload = {
-    title: title.trim(),
-    content: content.trim() || null,
+    if (!trimmedTitle) return
+
+    const payload = {
+      title: trimmedTitle,
+      content: content.trim() || null,
+    }
+
+    if (editingId) {
+      await onUpdateNote?.(editingId, payload)
+      resetForm()
+      return
+    }
+
+    await onCreateNote?.(payload)
+    resetForm()
   }
-
-  if (editingId) {
-    await onUpdateNote?.(editingId, payload)
-    setEditingId(null)
-    setTitle('')
-    setContent('')
-    return
-  }
-
-  await onCreateNote?.(payload)
-
-  setTitle('')
-  setContent('')
-}
 
   return (
     <div className="notesBox">
       <div className="panelHead">
-  <div className="hTitle smallTitle">
-    <span>notes</span>
-    <span className="dim">/ list</span>
-  </div>
+        <div className="hTitle smallTitle">
+          <span>notes</span>
+          <span className="dim">/ list</span>
+        </div>
 
-  <div className="dim">{notes.length} items</div>
-</div>
+        <div className="dim">{notes.length} items</div>
+      </div>
 
       <form className="noteForm" onSubmit={handleSubmit}>
         <input
@@ -89,7 +93,7 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
         </button>
 
         {editingId ? (
-          <button className="navBtn" type="button" disabled={busy} onClick={cancelEdit}>
+          <button className="navBtn" type="button" disabled={busy} onClick={resetForm}>
             Cancel
           </button>
         ) : null}
@@ -97,49 +101,55 @@ export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNot
 
       <div className="notesList">
         {notes.length ? (
-          notes.map((note) => (
-            <div className="noteItem" key={note.id}>
-              <div className="good">{note.title}</div>
+          notes.map((note) => {
+            const isExpanded = expandedNotes.has(note.id)
+            const hasLongContent = (note.content?.length ?? 0) > 120
 
-              {note.content ? (
-  <>
-    <div className={expandedNotes.has(note.id) ? 'dim noteContent' : 'dim noteContent collapsed'}>
-      {note.content}
-    </div>
+            return (
+              <div className="noteItem" key={note.id}>
+                <div className="good">{note.title}</div>
 
-    {note.content.length > 120 ? (
-      <button
-        className="inlineBtn"
-        type="button"
-        onClick={() => toggleExpanded(note.id)}
-      >
-        {expandedNotes.has(note.id) ? 'Show less' : 'Show more'}
-      </button>
-    ) : null}
-  </>
-) : null}
+                {note.content ? (
+                  <>
+                    <div className={isExpanded ? 'dim noteContent' : 'dim noteContent collapsed'}>
+                      {note.content}
+                    </div>
 
-              <div className="noteActions">
-  <button
-    className="navBtn"
-    type="button"
-    disabled={busy}
-    onClick={() => startEdit(note)}
-  >
-    Edit
-  </button>
+                    {hasLongContent ? (
+                      <button
+                        className="inlineBtn"
+                        type="button"
+                        disabled={busy}
+                        onClick={() => toggleExpanded(note.id)}
+                      >
+                        {isExpanded ? 'Show less' : 'Show more'}
+                      </button>
+                    ) : null}
+                  </>
+                ) : null}
 
-  <button
-    className="navBtn dangerBtn"
-    type="button"
-    disabled={busy}
-    onClick={() => onDeleteNote?.(note.id)}
-  >
-    Delete
-  </button>
-</div>
-            </div>
-          ))
+                <div className="noteActions">
+                  <button
+                    className="navBtn"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => startEdit(note)}
+                  >
+                    Edit
+                  </button>
+
+                  <button
+                    className="navBtn dangerBtn"
+                    type="button"
+                    disabled={busy}
+                    onClick={() => onDeleteNote?.(note.id)}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
+            )
+          })
         ) : (
           <div className="dim">No notes yet</div>
         )}
