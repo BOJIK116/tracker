@@ -37,6 +37,7 @@ export default function WeekPage({
   const [selectionMode, setSelectionMode] = useState(false)
   const [selectedDirections, setSelectedDirections] = useState([])
   const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false)
+  const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   let doneCells = 0
   let doneToday = 0
@@ -73,6 +74,7 @@ export default function WeekPage({
 
   function requestDeleteSelected() {
     if (!selectedDirections.length) return
+
     setConfirmDeleteOpen(true)
   }
 
@@ -91,6 +93,19 @@ export default function WeekPage({
     setSelectionMode(false)
   }
 
+  function requestLogout() {
+    setConfirmLogoutOpen(true)
+  }
+
+  function cancelLogout() {
+    setConfirmLogoutOpen(false)
+  }
+
+  function confirmLogout() {
+    setConfirmLogoutOpen(false)
+    onLogout?.()
+  }
+
   return (
     <>
       <div className="container">
@@ -101,7 +116,7 @@ export default function WeekPage({
               <span>tracker@system: ~/week</span>
             </div>
 
-            <button className="keyBtn" onClick={onLogout} disabled={busy} type="button">
+            <button className="keyBtn" onClick={requestLogout} disabled={busy} type="button">
               <span className="key">ESC</span>
               <span>logout</span>
             </button>
@@ -189,44 +204,61 @@ export default function WeekPage({
             </div>
 
             <WeekStats
-  week={week}
-  doneCells={doneCells}
-  totalCells={totalCells}
-  pct={pct}
-  doneToday={doneToday}
-  streaks={streaks}
-/>
+              week={week}
+              doneCells={doneCells}
+              totalCells={totalCells}
+              pct={pct}
+              doneToday={doneToday}
+              streaks={streaks}
+            />
 
-<div className="hr" />
+            <div className="hr" />
 
-<div className="sidePanels">
-  <NotesPanel
-    notes={notes}
-    busy={busy}
-    onCreateNote={onCreateNote}
-    onDeleteNote={onDeleteNote}
-    onUpdateNote={onUpdateNote}
-  />
+            <div className="sidePanels">
+              <NotesPanel
+                notes={notes}
+                busy={busy}
+                onCreateNote={onCreateNote}
+                onDeleteNote={onDeleteNote}
+                onUpdateNote={onUpdateNote}
+              />
 
-  <TodoPanel
-    todos={todos}
-    busy={busy}
-    onCreateTodo={onCreateTodo}
-    onToggleTodo={onToggleTodo}
-    onDeleteTodo={onDeleteTodo}
-  />
+              <TodoPanel
+                todos={todos}
+                busy={busy}
+                onCreateTodo={onCreateTodo}
+                onToggleTodo={onToggleTodo}
+                onDeleteTodo={onDeleteTodo}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {confirmDeleteOpen && (
+      {confirmDeleteOpen ? (
         <ConfirmModal
-          count={selectedDirections.length}
+          title={`Delete ${selectedDirections.length} ${
+            selectedDirections.length === 1 ? 'direction' : 'directions'
+          }?`}
+          message="All related marks will also be permanently deleted."
+          confirmText="Delete"
+          cancelText="Cancel"
           onCancel={cancelDeleteSelected}
           onConfirm={confirmDeleteSelected}
         />
-      )}
+      ) : null}
+
+      {confirmLogoutOpen ? (
+        <ConfirmModal
+          title="Log out?"
+          message="Are you sure you want to log out?"
+          confirmText="Log out"
+          cancelText="Cancel"
+          confirmClassName="btn danger"
+          onCancel={cancelLogout}
+          onConfirm={confirmLogout}
+        />
+      ) : null}
     </>
   )
 }

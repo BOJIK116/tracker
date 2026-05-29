@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ConfirmModal from '../ConfirmModal'
 
 export default function TodoPanel({
   todos = [],
@@ -9,6 +10,7 @@ export default function TodoPanel({
 }) {
   const [title, setTitle] = useState('')
   const [showCompleted, setShowCompleted] = useState(false)
+  const [todoToDelete, setTodoToDelete] = useState(null)
 
   const activeTodos = todos.filter((todo) => !todo.is_done)
   const completedTodos = todos.filter((todo) => todo.is_done)
@@ -25,6 +27,22 @@ export default function TodoPanel({
     })
 
     setTitle('')
+  }
+
+  function requestDeleteTodo(todo) {
+    setTodoToDelete(todo)
+  }
+
+  function cancelDeleteTodo() {
+    setTodoToDelete(null)
+  }
+
+  async function confirmDeleteTodo() {
+    if (!todoToDelete) return
+
+    await onDeleteTodo?.(todoToDelete.id)
+
+    setTodoToDelete(null)
   }
 
   function renderTodo(todo) {
@@ -48,7 +66,7 @@ export default function TodoPanel({
           className="navBtn dangerBtn"
           type="button"
           disabled={busy}
-          onClick={() => onDeleteTodo?.(todo.id)}
+          onClick={() => requestDeleteTodo(todo)}
         >
           Delete
         </button>
@@ -109,6 +127,17 @@ export default function TodoPanel({
           </div>
         ) : null}
       </div>
+
+      {todoToDelete ? (
+        <ConfirmModal
+          title="Delete todo?"
+          message={`Are you sure you want to delete "${todoToDelete.title}"?`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onCancel={cancelDeleteTodo}
+          onConfirm={confirmDeleteTodo}
+        />
+      ) : null}
     </div>
   )
 }

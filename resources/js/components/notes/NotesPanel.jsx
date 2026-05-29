@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import ConfirmModal from '../ConfirmModal'
 
 export default function NotesPanel({
   notes = [],
@@ -11,6 +12,7 @@ export default function NotesPanel({
   const [content, setContent] = useState('')
   const [editingId, setEditingId] = useState(null)
   const [expandedNotes, setExpandedNotes] = useState(() => new Set())
+  const [noteToDelete, setNoteToDelete] = useState(null)
 
   function resetForm() {
     setEditingId(null)
@@ -36,6 +38,22 @@ export default function NotesPanel({
 
       return next
     })
+  }
+
+  function requestDeleteNote(note) {
+    setNoteToDelete(note)
+  }
+
+  function cancelDeleteNote() {
+    setNoteToDelete(null)
+  }
+
+  async function confirmDeleteNote() {
+    if (!noteToDelete) return
+
+    await onDeleteNote?.(noteToDelete.id)
+
+    setNoteToDelete(null)
   }
 
   async function handleSubmit(e) {
@@ -142,7 +160,7 @@ export default function NotesPanel({
                     className="navBtn dangerBtn"
                     type="button"
                     disabled={busy}
-                    onClick={() => onDeleteNote?.(note.id)}
+                    onClick={() => requestDeleteNote(note)}
                   >
                     Delete
                   </button>
@@ -154,6 +172,17 @@ export default function NotesPanel({
           <div className="dim">No notes yet</div>
         )}
       </div>
+
+      {noteToDelete ? (
+        <ConfirmModal
+          title="Delete note?"
+          message={`Are you sure you want to delete "${noteToDelete.title}"?`}
+          confirmText="Delete"
+          cancelText="Cancel"
+          onCancel={cancelDeleteNote}
+          onConfirm={confirmDeleteNote}
+        />
+      ) : null}
     </div>
   )
 }

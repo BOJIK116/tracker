@@ -1,22 +1,26 @@
-export default function ConfirmModal({ onCancel, onConfirm, count = 0 }) {
+export default function ConfirmModal({
+  title = 'Are you sure?',
+  message = '',
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
+  confirmClassName = 'btn danger',
+  onCancel,
+  onConfirm,
+}) {
   return (
     <div className="modalOverlay" onClick={onCancel}>
       <div className="modalCard" onClick={(e) => e.stopPropagation()}>
-        <div className="modalTitle">
-          Delete {count > 0 ? count : ''} {count === 1 ? 'direction' : 'directions'}?
-        </div>
+        <div className="modalTitle">{title}</div>
 
-        <div className="modalText">
-          All related marks will also be permanently deleted.
-        </div>
+        {message ? <div className="modalText">{message}</div> : null}
 
         <div className="modalActions">
           <button type="button" className="btn ghost" onClick={onCancel}>
-            Cancel
+            {cancelText}
           </button>
 
-          <button type="button" className="btn danger" onClick={onConfirm}>
-            Delete
+          <button type="button" className={confirmClassName} onClick={onConfirm}>
+            {confirmText}
           </button>
         </div>
       </div>
