@@ -14,6 +14,8 @@ export default function NotesPanel({
   const [expandedNotes, setExpandedNotes] = useState(() => new Set())
   const [noteToDelete, setNoteToDelete] = useState(null)
 
+  const [openMenuNoteId, setOpenMenuNoteId] = useState(null)
+
   function resetForm() {
     setEditingId(null)
     setTitle('')
@@ -46,6 +48,10 @@ export default function NotesPanel({
 
   function cancelDeleteNote() {
     setNoteToDelete(null)
+  }
+
+  function toggleMenu(noteId) {
+  setOpenMenuNoteId((currentId) => (currentId === noteId ? null : noteId))
   }
 
   async function confirmDeleteNote() {
@@ -146,25 +152,45 @@ export default function NotesPanel({
                   </>
                 ) : null}
 
-                <div className="noteActions">
-                  <button
-                    className="navBtn"
-                    type="button"
-                    disabled={busy}
-                    onClick={() => startEdit(note)}
-                  >
-                    Edit
-                  </button>
+                <div className="itemMenu">
+  <button
+    className="menuTrigger"
+    type="button"
+    disabled={busy}
+    onClick={() => toggleMenu(note.id)}
+    aria-label="Note actions"
+  >
+    ⋮
+  </button>
 
-                  <button
-                    className="navBtn dangerBtn"
-                    type="button"
-                    disabled={busy}
-                    onClick={() => requestDeleteNote(note)}
-                  >
-                    Delete
-                  </button>
-                </div>
+  {openMenuNoteId === note.id ? (
+    <div className="menuDropdown menuDropdownUp">
+      <button
+        type="button"
+        className="menuItem"
+        disabled={busy}
+        onClick={() => {
+          setOpenMenuNoteId(null)
+          startEdit(note)
+        }}
+      >
+        Edit
+      </button>
+
+      <button
+        type="button"
+        className="menuItem danger"
+        disabled={busy}
+        onClick={() => {
+          setOpenMenuNoteId(null)
+          requestDeleteNote(note)
+        }}
+      >
+        Delete
+      </button>
+    </div>
+  ) : null}
+    </div>
               </div>
             )
           })

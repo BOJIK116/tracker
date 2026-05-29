@@ -106,6 +106,7 @@ export default function App() {
       onCreateTodo={tracker.onCreateTodo}
       onToggleTodo={tracker.onToggleTodo}
       onDeleteTodo={tracker.onDeleteTodo}
+      onUpdateTodo={tracker.onUpdateTodo}
     />
   )
 }

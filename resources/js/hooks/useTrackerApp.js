@@ -128,6 +128,16 @@ export function useTrackerApp() {
     setTodos((prev) => prev.filter((todo) => todo.id !== id))
   }
 
+  async function handleUpdateTodo(id, data) {
+  const updatedTodo = await updateTodo(id, data)
+
+  setTodos((prev) =>
+    prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+  )
+
+  return updatedTodo
+  }
+
   async function reloadWeekOnly(curr = selected) {
     const weekData = await api(
       `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
@@ -175,6 +185,16 @@ export function useTrackerApp() {
     if (e.key === 'ArrowLeft') prevWeek()
     if (e.key === 'ArrowRight') nextWeek()
   }
+
+  async function handleUpdateTodo(id, data) {
+  const updatedTodo = await updateTodo(id, data)
+
+  setTodos((prev) =>
+    prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
+  )
+
+  return updatedTodo
+}
 
   window.addEventListener('keydown', onKey)
 
@@ -423,5 +443,6 @@ export function useTrackerApp() {
     onCreateTodo: handleCreateTodo,
     onToggleTodo: handleToggleTodo,
     onDeleteTodo: handleDeleteTodo,
+    onUpdateTodo: handleUpdateTodo,
   }
 }

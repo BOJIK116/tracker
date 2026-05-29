@@ -30,6 +30,7 @@ export default function WeekPage({
   onCreateTodo,
   onToggleTodo,
   onDeleteTodo,
+  onUpdateTodo,
 }) {
   const today = todayStrLocal()
   const totalCells = week.rows.length * week.days.length
@@ -251,6 +252,7 @@ export default function WeekPage({
                 onCreateTodo={onCreateTodo}
                 onToggleTodo={onToggleTodo}
                 onDeleteTodo={onDeleteTodo}
+                onUpdateTodo={onUpdateTodo}
               />
             </div>
           </div>

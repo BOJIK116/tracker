@@ -1464,3 +1464,60 @@ td.dirCell > .delBtn {
 .inlineBtn:hover {
   text-decoration: underline;
 }
+
+.itemMenu {
+  position: relative;
+  justify-self: end;
+}
+
+.menuTrigger {
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(92, 255, 176, 0.22);
+  border-radius: 8px;
+  background: rgba(0, 20, 14, 0.45);
+  color: #d9efe7;
+  cursor: pointer;
+}
+
+.menuTrigger:hover {
+  border-color: rgba(92, 255, 176, 0.65);
+}
+
+.menuDropdown {
+  position: absolute;
+  right: 0;
+  top: 36px;
+  z-index: 10;
+  min-width: 120px;
+  padding: 6px;
+  border: 1px solid rgba(92, 255, 176, 0.18);
+  border-radius: 10px;
+  background: #06120e;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.menuItem {
+  width: 100%;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #d9efe7;
+  padding: 8px 10px;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+
+.menuItem:hover {
+  background: rgba(92, 255, 176, 0.08);
+}
+
+.menuItem.danger {
+  color: #ff6b6b;
+}
+
+.menuDropdownUp {
+  top: auto;
+  bottom: 36px;
+}

@@ -7,10 +7,14 @@ export default function TodoPanel({
   onCreateTodo,
   onToggleTodo,
   onDeleteTodo,
+  onUpdateTodo,
 }) {
   const [title, setTitle] = useState('')
   const [showCompleted, setShowCompleted] = useState(false)
   const [todoToDelete, setTodoToDelete] = useState(null)
+  const [openMenuTodoId, setOpenMenuTodoId] = useState(null)
+  const [editingTodoId, setEditingTodoId] = useState(null)
+  const [editingTitle, setEditingTitle] = useState('')
 
   const activeTodos = todos.filter((todo) => !todo.is_done)
   const completedTodos = todos.filter((todo) => todo.is_done)
@@ -27,6 +31,34 @@ export default function TodoPanel({
     })
 
     setTitle('')
+  }
+
+  function toggleMenu(todoId) {
+    setOpenMenuTodoId((currentId) => (currentId === todoId ? null : todoId))
+  }
+
+  function startEditTodo(todo) {
+    setOpenMenuTodoId(null)
+    setEditingTodoId(todo.id)
+    setEditingTitle(todo.title)
+  }
+
+  function cancelEditTodo() {
+    setEditingTodoId(null)
+    setEditingTitle('')
+  }
+
+  async function saveEditTodo() {
+    const trimmedTitle = editingTitle.trim()
+
+    if (!editingTodoId || !trimmedTitle) return
+
+    await onUpdateTodo?.(editingTodoId, {
+      title: trimmedTitle,
+    })
+
+    setEditingTodoId(null)
+    setEditingTitle('')
   }
 
   function requestDeleteTodo(todo) {
@@ -46,30 +78,92 @@ export default function TodoPanel({
   }
 
   function renderTodo(todo) {
+    const isEditing = editingTodoId === todo.id
+
     return (
       <div className="todoItem" key={todo.id}>
         <button
           className={todo.is_done ? 'todoCheck done' : 'todoCheck'}
           type="button"
-          disabled={busy}
+          disabled={busy || isEditing}
           onClick={() => onToggleTodo?.(todo)}
           title={todo.is_done ? 'Mark as not done' : 'Mark as done'}
         >
           {todo.is_done ? '✓' : '○'}
         </button>
 
-        <span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>
-          {todo.title}
-        </span>
+        {isEditing ? (
+          <input
+            className="todoEditInput"
+            value={editingTitle}
+            onChange={(e) => setEditingTitle(e.target.value)}
+            disabled={busy}
+            autoFocus
+          />
+        ) : (
+          <span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>
+            {todo.title}
+          </span>
+        )}
 
-        <button
-          className="navBtn dangerBtn"
-          type="button"
-          disabled={busy}
-          onClick={() => requestDeleteTodo(todo)}
-        >
-          Delete
-        </button>
+        {isEditing ? (
+          <div className="todoEditActions">
+            <button
+              className="navBtn"
+              type="button"
+              disabled={busy || !editingTitle.trim()}
+              onClick={saveEditTodo}
+            >
+              Save
+            </button>
+
+            <button
+              className="navBtn"
+              type="button"
+              disabled={busy}
+              onClick={cancelEditTodo}
+            >
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <div className="itemMenu">
+            <button
+              className="menuTrigger"
+              type="button"
+              disabled={busy}
+              onClick={() => toggleMenu(todo.id)}
+              aria-label="Todo actions"
+            >
+              ⋮
+            </button>
+
+            {openMenuTodoId === todo.id ? (
+              <div className="menuDropdown">
+                <button
+                  type="button"
+                  className="menuItem"
+                  disabled={busy}
+                  onClick={() => startEditTodo(todo)}
+                >
+                  Edit
+                </button>
+
+                <button
+                  type="button"
+                  className="menuItem danger"
+                  disabled={busy}
+                  onClick={() => {
+                    setOpenMenuTodoId(null)
+                    requestDeleteTodo(todo)
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            ) : null}
+          </div>
+        )}
       </div>
     )
   }
