@@ -1521,3 +1521,62 @@ td.dirCell > .delBtn {
   top: auto;
   bottom: 36px;
 }
+
+.todoItem .todoEditInput {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  background: rgba(0, 20, 14, 0.78);
+  border: 1px solid rgba(92, 255, 176, 0.35);
+  color: #d9efe7;
+  border-radius: 10px;
+  padding: 8px 12px;
+  font: inherit;
+  outline: none;
+  appearance: none;
+}
+
+.todoItem .todoEditInput:focus {
+  outline: none;
+  border-color: rgba(92, 255, 176, 0.85);
+  box-shadow: 0 0 0 3px rgba(92, 255, 176, 0.12);
+}
+
+.todoEditActions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.todoEditActions .navBtn {
+  padding: 8px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.cancelBtn {
+  color: #ff7a7a;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 122, 122, 0.08);
+}
+.cancelBtn {
+  color: #ff7a7a;
+}
+
+.cancelBtn:hover {
+  background: rgba(255, 122, 122, 0.08);
+}
+
+.noteEditTextarea {
+  margin-top: 10px;
+}
+
+.noteEditActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 10px;
+}

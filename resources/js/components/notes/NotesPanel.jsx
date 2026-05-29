@@ -10,22 +10,48 @@ export default function NotesPanel({
 }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
-  const [editingId, setEditingId] = useState(null)
+
   const [expandedNotes, setExpandedNotes] = useState(() => new Set())
   const [noteToDelete, setNoteToDelete] = useState(null)
-
   const [openMenuNoteId, setOpenMenuNoteId] = useState(null)
 
-  function resetForm() {
-    setEditingId(null)
+  const [editingNoteId, setEditingNoteId] = useState(null)
+  const [editingTitle, setEditingTitle] = useState('')
+  const [editingContent, setEditingContent] = useState('')
+
+  function resetCreateForm() {
     setTitle('')
     setContent('')
   }
 
-  function startEdit(note) {
-    setEditingId(note.id)
-    setTitle(note.title)
-    setContent(note.content ?? '')
+  function startEditNote(note) {
+    setOpenMenuNoteId(null)
+    setEditingNoteId(note.id)
+    setEditingTitle(note.title)
+    setEditingContent(note.content ?? '')
+  }
+
+  function cancelEditNote() {
+    setEditingNoteId(null)
+    setEditingTitle('')
+    setEditingContent('')
+  }
+
+  async function saveEditNote() {
+    const trimmedTitle = editingTitle.trim()
+
+    if (!editingNoteId || !trimmedTitle) return
+
+    await onUpdateNote?.(editingNoteId, {
+      title: trimmedTitle,
+      content: editingContent.trim() || null,
+    })
+
+    cancelEditNote()
+  }
+
+  function toggleMenu(noteId) {
+    setOpenMenuNoteId((currentId) => (currentId === noteId ? null : noteId))
   }
 
   function toggleExpanded(noteId) {
@@ -43,15 +69,12 @@ export default function NotesPanel({
   }
 
   function requestDeleteNote(note) {
+    setOpenMenuNoteId(null)
     setNoteToDelete(note)
   }
 
   function cancelDeleteNote() {
     setNoteToDelete(null)
-  }
-
-  function toggleMenu(noteId) {
-  setOpenMenuNoteId((currentId) => (currentId === noteId ? null : noteId))
   }
 
   async function confirmDeleteNote() {
@@ -69,19 +92,12 @@ export default function NotesPanel({
 
     if (!trimmedTitle) return
 
-    const payload = {
+    await onCreateNote?.({
       title: trimmedTitle,
       content: content.trim() || null,
-    }
+    })
 
-    if (editingId) {
-      await onUpdateNote?.(editingId, payload)
-      resetForm()
-      return
-    }
-
-    await onCreateNote?.(payload)
-    resetForm()
+    resetCreateForm()
   }
 
   return (
@@ -113,84 +129,118 @@ export default function NotesPanel({
         />
 
         <button className="navBtn" type="submit" disabled={busy || !title.trim()}>
-          {editingId ? 'Save note' : 'Add note'}
+          Add note
         </button>
-
-        {editingId ? (
-          <button className="navBtn" type="button" disabled={busy} onClick={resetForm}>
-            Cancel
-          </button>
-        ) : null}
       </form>
 
       <div className="notesList">
         {notes.length ? (
           notes.map((note) => {
+            const isEditing = editingNoteId === note.id
             const isExpanded = expandedNotes.has(note.id)
             const hasLongContent = (note.content?.length ?? 0) > 120
 
             return (
               <div className="noteItem" key={note.id}>
-                <div className="good">{note.title}</div>
-
-                {note.content ? (
+                {isEditing ? (
                   <>
-                    <div className={isExpanded ? 'dim noteContent' : 'dim noteContent collapsed'}>
-                      {note.content}
-                    </div>
+                    <input
+                      className="noteInput noteEditInput"
+                      value={editingTitle}
+                      onChange={(e) => setEditingTitle(e.target.value)}
+                      disabled={busy}
+                      autoFocus
+                    />
 
-                    {hasLongContent ? (
+                    <textarea
+                      className="noteTextarea noteEditTextarea"
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      disabled={busy}
+                    />
+
+                    <div className="noteEditActions">
                       <button
-                        className="inlineBtn"
+                        className="navBtn"
+                        type="button"
+                        disabled={busy || !editingTitle.trim()}
+                        onClick={saveEditNote}
+                      >
+                        Save
+                      </button>
+
+                      <button
+                        className="navBtn cancelBtn"
                         type="button"
                         disabled={busy}
-                        onClick={() => toggleExpanded(note.id)}
+                        onClick={cancelEditNote}
                       >
-                        {isExpanded ? 'Show less' : 'Show more'}
+                        Cancel
                       </button>
-                    ) : null}
+                    </div>
                   </>
-                ) : null}
+                ) : (
+                  <>
+                    <div className="good">{note.title}</div>
 
-                <div className="itemMenu">
-  <button
-    className="menuTrigger"
-    type="button"
-    disabled={busy}
-    onClick={() => toggleMenu(note.id)}
-    aria-label="Note actions"
-  >
-    ⋮
-  </button>
+                    {note.content ? (
+                      <>
+                        <div
+                          className={
+                            isExpanded ? 'dim noteContent' : 'dim noteContent collapsed'
+                          }
+                        >
+                          {note.content}
+                        </div>
 
-  {openMenuNoteId === note.id ? (
-    <div className="menuDropdown menuDropdownUp">
-      <button
-        type="button"
-        className="menuItem"
-        disabled={busy}
-        onClick={() => {
-          setOpenMenuNoteId(null)
-          startEdit(note)
-        }}
-      >
-        Edit
-      </button>
+                        {hasLongContent ? (
+                          <button
+                            className="inlineBtn"
+                            type="button"
+                            disabled={busy}
+                            onClick={() => toggleExpanded(note.id)}
+                          >
+                            {isExpanded ? 'Show less' : 'Show more'}
+                          </button>
+                        ) : null}
+                      </>
+                    ) : null}
 
-      <button
-        type="button"
-        className="menuItem danger"
-        disabled={busy}
-        onClick={() => {
-          setOpenMenuNoteId(null)
-          requestDeleteNote(note)
-        }}
-      >
-        Delete
-      </button>
-    </div>
-  ) : null}
-    </div>
+                    <div className="itemMenu noteMenu">
+                      <button
+                        className="menuTrigger"
+                        type="button"
+                        disabled={busy}
+                        onClick={() => toggleMenu(note.id)}
+                        aria-label="Note actions"
+                      >
+                        ⋮
+                      </button>
+
+                      {openMenuNoteId === note.id ? (
+                        <div className="menuDropdown menuDropdownUp">
+                          <button
+                            type="button"
+                            className="menuItem"
+                            disabled={busy}
+                            onClick={() => startEditNote(note)}
+                          >
+                            Edit
+                          </button>
+
+                          <button
+                            type="button"
+                            className="menuItem danger"
+                            disabled={busy}
+                            onClick={() => requestDeleteNote(note)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      ) : null}
+                    </div>
+                  </>
+                )}
               </div>
             )
           })

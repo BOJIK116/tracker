@@ -118,7 +118,7 @@ export default function TodoPanel({
             </button>
 
             <button
-              className="navBtn"
+              className="navBtn cancelBtn"
               type="button"
               disabled={busy}
               onClick={cancelEditTodo}
