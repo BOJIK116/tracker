@@ -171,26 +171,15 @@ export function useTrackerApp() {
   }
 
   useEffect(() => {
-    function onKey(e) {
-      if (e.key === 'Escape') {
-        if (confirmDeleteOpen) {
-          cancelDeleteDirection()
-          return
-        }
+  function onKey(e) {
+    if (e.key === 'ArrowLeft') prevWeek()
+    if (e.key === 'ArrowRight') nextWeek()
+  }
 
-        logout()
-      }
+  window.addEventListener('keydown', onKey)
 
-      if (confirmDeleteOpen) return
-
-      if (e.key === 'ArrowLeft') prevWeek()
-      if (e.key === 'ArrowRight') nextWeek()
-    }
-
-    window.addEventListener('keydown', onKey)
-
-    return () => window.removeEventListener('keydown', onKey)
-  }, [confirmDeleteOpen])
+  return () => window.removeEventListener('keydown', onKey)
+  }, [])
 
   useEffect(() => {
     async function init() {

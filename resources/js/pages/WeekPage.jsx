@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import CreateDirectionForm from '../components/directions/CreateDirectionForm'
 import WeekGrid from '../components/tracker/WeekGrid'
 import WeekStats from '../components/tracker/WeekStats'
@@ -106,6 +106,28 @@ export default function WeekPage({
     onLogout?.()
   }
 
+    useEffect(() => {
+  function onKey(e) {
+    if (e.key !== 'Escape') return
+
+    if (confirmDeleteOpen) {
+      cancelDeleteSelected()
+      return
+    }
+
+    if (confirmLogoutOpen) {
+      cancelLogout()
+      return
+    }
+
+    requestLogout()
+  }
+
+  window.addEventListener('keydown', onKey)
+
+  return () => window.removeEventListener('keydown', onKey)
+}, [confirmDeleteOpen, confirmLogoutOpen])
+  
   return (
     <>
       <div className="container">
