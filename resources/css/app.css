@@ -1621,3 +1621,189 @@ td.dirCell > .delBtn {
 .panelHead .dim {
   color: rgba(217, 239, 231, 0.72);
 }
+
+/* ===== Mobile adaptation ===== */
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .term {
+    border-radius: 14px;
+  }
+
+  .termTop {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .badge {
+    width: 100%;
+    box-sizing: border-box;
+    overflow-wrap: anywhere;
+  }
+
+  .keyBtn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .termBody {
+    padding: 14px;
+  }
+
+  .hTitle {
+    font-size: 24px;
+    line-height: 1.15;
+  }
+
+  .meta {
+    line-height: 1.6;
+    overflow-wrap: anywhere;
+  }
+
+  .toolbarRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .bulkActions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .bulkActions .navBtn {
+    flex: 1;
+  }
+
+  .navRow {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+    text-align: center;
+  }
+
+  .navRow .navBtn {
+    width: 100%;
+  }
+
+  .sidePanels {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .notesBox,
+  .todosBox {
+    padding: 12px;
+  }
+
+  .panelHead {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .noteForm .navBtn,
+  .todoForm .navBtn {
+    width: 100%;
+    justify-self: stretch;
+  }
+
+  .todoItem {
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+  }
+
+  .todoEditActions,
+  .noteEditActions {
+    justify-content: stretch;
+  }
+
+  .todoEditActions .navBtn,
+  .noteEditActions .navBtn {
+    flex: 1;
+  }
+
+  .menuDropdown {
+    min-width: 140px;
+  }
+
+  .modalCard {
+    width: calc(100vw - 32px);
+    max-width: none;
+    box-sizing: border-box;
+  }
+
+  .modalActions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .modalActions .btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .weekGrid,
+  .gridWrap,
+  .trackerGrid {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  table {
+    min-width: 720px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 6px;
+  }
+
+  .termBody {
+    padding: 10px;
+  }
+
+  .hTitle {
+    font-size: 20px;
+  }
+
+  .noteInput,
+  .noteTextarea,
+  .todoEditInput {
+    font-size: 16px;
+  }
+
+  .todoItem {
+    grid-template-columns: auto 1fr;
+  }
+
+  .todoItem .itemMenu,
+  .todoEditActions {
+    grid-column: 1 / -1;
+    justify-self: stretch;
+  }
+
+  .todoEditActions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.noteItem {
+  position: relative;
+  padding-right: 64px;
+}
+
+.noteItem .noteMenu {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+}
