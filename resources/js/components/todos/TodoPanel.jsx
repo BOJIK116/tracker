@@ -85,12 +85,33 @@ export default function TodoPanel({
     setOpenMenuTodoId(null)
   }
 
+  useEffect(() => {
+  function onKey(e) {
+    if (e.key !== 'Escape') return
+
+    if (openMenuTodoId) {
+      setOpenMenuTodoId(null)
+      return
+    }
+
+    if (editingTodoId) {
+      cancelEditTodo()
+    }
+  }
+
+  window.addEventListener('keydown', onKey)
+
+  return () => {
+    window.removeEventListener('keydown', onKey)
+  }
+  }, [openMenuTodoId, editingTodoId])
+
   window.addEventListener('click', closeMenu)
 
   return () => {
     window.removeEventListener('click', closeMenu)
   }
-}, [openMenuTodoId])
+  }, [openMenuTodoId])
 
   function renderTodo(todo) {
     const isEditing = editingTodoId === todo.id

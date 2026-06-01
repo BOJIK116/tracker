@@ -107,6 +107,27 @@ export default function NotesPanel({
     setOpenMenuNoteId(null)
   }
 
+  useEffect(() => {
+  function onKey(e) {
+    if (e.key !== 'Escape') return
+
+    if (openMenuNoteId) {
+      setOpenMenuNoteId(null)
+      return
+    }
+
+    if (editingNoteId) {
+      cancelEditNote()
+    }
+  }
+
+  window.addEventListener('keydown', onKey)
+
+  return () => {
+    window.removeEventListener('keydown', onKey)
+  }
+  }, [openMenuNoteId, editingNoteId])
+
   window.addEventListener('click', closeMenu)
 
   return () => {
