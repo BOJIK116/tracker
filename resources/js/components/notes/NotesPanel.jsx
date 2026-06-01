@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
 
 export default function NotesPanel({
@@ -99,6 +99,20 @@ export default function NotesPanel({
 
     resetCreateForm()
   }
+
+  useEffect(() => {
+  if (!openMenuNoteId) return
+
+  function closeMenu() {
+    setOpenMenuNoteId(null)
+  }
+
+  window.addEventListener('click', closeMenu)
+
+  return () => {
+    window.removeEventListener('click', closeMenu)
+  }
+  }, [openMenuNoteId])
 
   return (
     <div className="notesBox">
@@ -206,7 +220,7 @@ export default function NotesPanel({
                       </>
                     ) : null}
 
-                    <div className="itemMenu noteMenu">
+                    <div className="itemMenu noteMenu" onClick={(e) => e.stopPropagation()}>
                       <button
                         className="menuTrigger"
                         type="button"

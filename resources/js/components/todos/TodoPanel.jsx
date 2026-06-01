@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
+
 
 export default function TodoPanel({
   todos = [],
@@ -77,6 +78,20 @@ export default function TodoPanel({
     setTodoToDelete(null)
   }
 
+  useEffect(() => {
+  if (!openMenuTodoId) return
+
+  function closeMenu() {
+    setOpenMenuTodoId(null)
+  }
+
+  window.addEventListener('click', closeMenu)
+
+  return () => {
+    window.removeEventListener('click', closeMenu)
+  }
+}, [openMenuTodoId])
+
   function renderTodo(todo) {
     const isEditing = editingTodoId === todo.id
 
@@ -127,7 +142,7 @@ export default function TodoPanel({
             </button>
           </div>
         ) : (
-          <div className="itemMenu">
+          <div className="itemMenu" onClick={(e) => e.stopPropagation()}>
             <button
               className="menuTrigger"
               type="button"
