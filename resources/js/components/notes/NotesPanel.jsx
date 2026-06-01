@@ -19,6 +19,41 @@ export default function NotesPanel({
   const [editingTitle, setEditingTitle] = useState('')
   const [editingContent, setEditingContent] = useState('')
 
+  useEffect(() => {
+    if (!openMenuNoteId) return
+
+    function closeMenu() {
+      setOpenMenuNoteId(null)
+    }
+
+    window.addEventListener('click', closeMenu)
+
+    return () => {
+      window.removeEventListener('click', closeMenu)
+    }
+  }, [openMenuNoteId])
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== 'Escape') return
+
+      if (openMenuNoteId) {
+        setOpenMenuNoteId(null)
+        return
+      }
+
+      if (editingNoteId) {
+        cancelEditNote()
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [openMenuNoteId, editingNoteId])
+
   function resetCreateForm() {
     setTitle('')
     setContent('')
@@ -99,41 +134,6 @@ export default function NotesPanel({
 
     resetCreateForm()
   }
-
-  useEffect(() => {
-  if (!openMenuNoteId) return
-
-  function closeMenu() {
-    setOpenMenuNoteId(null)
-  }
-
-  useEffect(() => {
-  function onKey(e) {
-    if (e.key !== 'Escape') return
-
-    if (openMenuNoteId) {
-      setOpenMenuNoteId(null)
-      return
-    }
-
-    if (editingNoteId) {
-      cancelEditNote()
-    }
-  }
-
-  window.addEventListener('keydown', onKey)
-
-  return () => {
-    window.removeEventListener('keydown', onKey)
-  }
-  }, [openMenuNoteId, editingNoteId])
-
-  window.addEventListener('click', closeMenu)
-
-  return () => {
-    window.removeEventListener('click', closeMenu)
-  }
-  }, [openMenuNoteId])
 
   return (
     <div className="notesBox">

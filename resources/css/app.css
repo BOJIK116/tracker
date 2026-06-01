@@ -1580,3 +1580,44 @@ td.dirCell > .delBtn {
   gap: 8px;
   margin-top: 10px;
 }
+
+/* ===== Small UI polish: notes / todos ===== */
+
+.noteForm,
+.todoForm {
+  margin-bottom: 18px;
+}
+
+.notesList,
+.todosList {
+  gap: 12px;
+}
+
+.noteForm .navBtn,
+.todoForm .navBtn {
+  justify-self: end;
+  border: 1px solid rgba(92, 255, 176, 0.22);
+  border-radius: 8px;
+  padding: 8px 12px;
+  background: rgba(92, 255, 176, 0.05);
+}
+
+.noteForm .navBtn:hover,
+.todoForm .navBtn:hover {
+  border-color: rgba(92, 255, 176, 0.55);
+  background: rgba(92, 255, 176, 0.09);
+}
+
+.inlineBtn {
+  justify-self: start;
+  color: rgba(92, 255, 176, 0.82);
+}
+
+.inlineBtn:hover {
+  color: #5cffb0;
+  text-decoration: none;
+}
+
+.panelHead .dim {
+  color: rgba(217, 239, 231, 0.72);
+}

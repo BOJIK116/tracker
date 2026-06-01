@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
 
-
 export default function TodoPanel({
   todos = [],
   busy,
@@ -19,6 +18,41 @@ export default function TodoPanel({
 
   const activeTodos = todos.filter((todo) => !todo.is_done)
   const completedTodos = todos.filter((todo) => todo.is_done)
+
+  useEffect(() => {
+    if (!openMenuTodoId) return
+
+    function closeMenu() {
+      setOpenMenuTodoId(null)
+    }
+
+    window.addEventListener('click', closeMenu)
+
+    return () => {
+      window.removeEventListener('click', closeMenu)
+    }
+  }, [openMenuTodoId])
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== 'Escape') return
+
+      if (openMenuTodoId) {
+        setOpenMenuTodoId(null)
+        return
+      }
+
+      if (editingTodoId) {
+        cancelEditTodo()
+      }
+    }
+
+    window.addEventListener('keydown', onKey)
+
+    return () => {
+      window.removeEventListener('keydown', onKey)
+    }
+  }, [openMenuTodoId, editingTodoId])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -58,11 +92,11 @@ export default function TodoPanel({
       title: trimmedTitle,
     })
 
-    setEditingTodoId(null)
-    setEditingTitle('')
+    cancelEditTodo()
   }
 
   function requestDeleteTodo(todo) {
+    setOpenMenuTodoId(null)
     setTodoToDelete(todo)
   }
 
@@ -77,41 +111,6 @@ export default function TodoPanel({
 
     setTodoToDelete(null)
   }
-
-  useEffect(() => {
-  if (!openMenuTodoId) return
-
-  function closeMenu() {
-    setOpenMenuTodoId(null)
-  }
-
-  useEffect(() => {
-  function onKey(e) {
-    if (e.key !== 'Escape') return
-
-    if (openMenuTodoId) {
-      setOpenMenuTodoId(null)
-      return
-    }
-
-    if (editingTodoId) {
-      cancelEditTodo()
-    }
-  }
-
-  window.addEventListener('keydown', onKey)
-
-  return () => {
-    window.removeEventListener('keydown', onKey)
-  }
-  }, [openMenuTodoId, editingTodoId])
-
-  window.addEventListener('click', closeMenu)
-
-  return () => {
-    window.removeEventListener('click', closeMenu)
-  }
-  }, [openMenuTodoId])
 
   function renderTodo(todo) {
     const isEditing = editingTodoId === todo.id
@@ -189,10 +188,7 @@ export default function TodoPanel({
                   type="button"
                   className="menuItem danger"
                   disabled={busy}
-                  onClick={() => {
-                    setOpenMenuTodoId(null)
-                    requestDeleteTodo(todo)
-                  }}
+                  onClick={() => requestDeleteTodo(todo)}
                 >
                   Delete
                 </button>
