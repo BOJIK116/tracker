@@ -91,57 +91,57 @@ class DirectionSecurityTest extends TestCase
     }
 
     public function test_user_can_create_direction(): void
-{
-    $user = User::factory()->create();
+    {
+        $user = User::factory()->create();
 
-    Sanctum::actingAs($user);
+        Sanctum::actingAs($user);
 
-    $response = $this->postJson('/api/directions', [
-        'name' => 'Gym',
-    ]);
+        $response = $this->postJson('/api/directions', [
+            'name' => 'Gym',
+        ]);
 
-    $response->assertCreated();
+        $response->assertCreated();
 
-    $response->assertJsonFragment([
-        'name' => 'Gym',
-        'slug' => 'gym',
-        'user_id' => $user->id,
-    ]);
+        $response->assertJsonFragment([
+            'name' => 'Gym',
+            'slug' => 'gym',
+            'user_id' => $user->id,
+        ]);
 
-    $this->assertDatabaseHas('directions', [
-        'user_id' => $user->id,
-        'name' => 'Gym',
-        'slug' => 'gym',
-    ]);
-}
+        $this->assertDatabaseHas('directions', [
+            'user_id' => $user->id,
+            'name' => 'Gym',
+            'slug' => 'gym',
+        ]);
+    }
 
-public function test_slug_is_unique_within_same_user(): void
-{
-    $user = User::factory()->create();
+    public function test_slug_is_unique_within_same_user(): void
+    {
+        $user = User::factory()->create();
 
-    Direction::factory()->create([
-        'user_id' => $user->id,
-        'name' => 'Gym',
-        'slug' => 'gym',
-    ]);
+        Direction::factory()->create([
+            'user_id' => $user->id,
+            'name' => 'Gym',
+            'slug' => 'gym',
+        ]);
 
-    Sanctum::actingAs($user);
+        Sanctum::actingAs($user);
 
-    $response = $this->postJson('/api/directions', [
-        'name' => 'Gym',
-    ]);
+        $response = $this->postJson('/api/directions', [
+            'name' => 'Gym',
+        ]);
 
-    $response->assertCreated();
+        $response->assertCreated();
 
-    $response->assertJsonFragment([
-        'name' => 'Gym',
-        'slug' => 'gym-2',
-        'user_id' => $user->id,
-    ]);
+        $response->assertJsonFragment([
+            'name' => 'Gym',
+            'slug' => 'gym-2',
+            'user_id' => $user->id,
+        ]);
 
-    $this->assertDatabaseHas('directions', [
-        'user_id' => $user->id,
-        'slug' => 'gym-2',
-    ]);
-}
+        $this->assertDatabaseHas('directions', [
+            'user_id' => $user->id,
+            'slug' => 'gym-2',
+        ]);
+    }
 }

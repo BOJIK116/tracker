@@ -94,65 +94,66 @@ class TrackerSecurityTest extends TestCase
             'name' => 'Reading',
         ]);
     }
+
     public function test_user_can_mark_own_direction(): void
-{
-    $user = User::factory()->create();
+    {
+        $user = User::factory()->create();
 
-    $direction = Direction::factory()->create([
-        'user_id' => $user->id,
-    ]);
+        $direction = Direction::factory()->create([
+            'user_id' => $user->id,
+        ]);
 
-    Sanctum::actingAs($user);
+        Sanctum::actingAs($user);
 
-    $response = $this->postJson('/api/tracker/mark', [
-        'direction_id' => $direction->id,
-        'date' => '2026-03-10',
-        'completed' => true,
-    ]);
+        $response = $this->postJson('/api/tracker/mark', [
+            'direction_id' => $direction->id,
+            'date' => '2026-03-10',
+            'completed' => true,
+        ]);
 
-    $response->assertOk();
-    $response->assertJson(['ok' => true]);
+        $response->assertOk();
+        $response->assertJson(['ok' => true]);
 
-    $this->assertDatabaseHas('tracks', [
-        'user_id' => $user->id,
-        'direction_id' => $direction->id,
-        'iso_year' => 2026,
-        'iso_week' => 11,
-        'iso_weekday' => 2,
-        'completed' => 1,
-    ]);
-}
+        $this->assertDatabaseHas('tracks', [
+            'user_id' => $user->id,
+            'direction_id' => $direction->id,
+            'iso_year' => 2026,
+            'iso_week' => 11,
+            'iso_weekday' => 2,
+            'completed' => 1,
+        ]);
+    }
 
-public function test_tracker_week_returns_completed_status_for_own_track(): void
-{
-    $user = User::factory()->create();
+    public function test_tracker_week_returns_completed_status_for_own_track(): void
+    {
+        $user = User::factory()->create();
 
-    $direction = Direction::factory()->create([
-        'user_id' => $user->id,
-        'name' => 'Gym',
-        'slug' => 'gym',
-    ]);
+        $direction = Direction::factory()->create([
+            'user_id' => $user->id,
+            'name' => 'Gym',
+            'slug' => 'gym',
+        ]);
 
-    Track::factory()->create([
-        'user_id' => $user->id,
-        'direction_id' => $direction->id,
-        'iso_year' => 2026,
-        'iso_week' => 11,
-        'iso_weekday' => 2,
-        'completed' => true,
-    ]);
+        Track::factory()->create([
+            'user_id' => $user->id,
+            'direction_id' => $direction->id,
+            'iso_year' => 2026,
+            'iso_week' => 11,
+            'iso_weekday' => 2,
+            'completed' => true,
+        ]);
 
-    Sanctum::actingAs($user);
+        Sanctum::actingAs($user);
 
-    $response = $this->getJson('/api/tracker/week?year=2026&week=11');
+        $response = $this->getJson('/api/tracker/week?year=2026&week=11');
 
-    $response->assertOk();
+        $response->assertOk();
 
-    $rows = $response->json('rows');
+        $rows = $response->json('rows');
 
-    $this->assertCount(1, $rows);
-    $this->assertSame($direction->id, $rows[0]['direction']['id']);
-    $this->assertTrue($rows[0]['statuses'][2]);
-    $this->assertFalse($rows[0]['statuses'][1]);
-}
+        $this->assertCount(1, $rows);
+        $this->assertSame($direction->id, $rows[0]['direction']['id']);
+        $this->assertTrue($rows[0]['statuses'][2]);
+        $this->assertFalse($rows[0]['statuses'][1]);
+    }
 }

@@ -16,7 +16,7 @@ class Tracker
         // обрезаем до 1 символа по центру (для Пн/Вт/✓/- этого достаточно)
         $value = mb_substr($value, 0, 1, 'UTF-8');
 
-        return ' ' . $value . ' ';
+        return ' '.$value.' ';
     }
 
     public function renderAsciiBorder(string $left, string $middle, string $right): string
@@ -24,7 +24,7 @@ class Tracker
         $segment = str_repeat('─', $this->cellWidth);
         $parts = array_fill(0, count($this->weekDays), $segment);
 
-        return $left . implode($middle, $parts) . $right;
+        return $left.implode($middle, $parts).$right;
     }
 
     public function renderAsciiHeader(): string
@@ -45,7 +45,7 @@ class Tracker
             $cells[] = $this->cell($labels[$day] ?? $day);
         }
 
-        return '│' . implode('│', $cells) . '│';
+        return '│'.implode('│', $cells).'│';
     }
 
     public function renderAsciiStatuses(array $statuses): string
@@ -56,7 +56,7 @@ class Tracker
             $cells[] = $this->cell(($statuses[$day] ?? false) ? '✓' : '-');
         }
 
-        return '│' . implode('│', $cells) . '│';
+        return '│'.implode('│', $cells).'│';
     }
 
     public function renderAsciiWeek(array $statuses): string

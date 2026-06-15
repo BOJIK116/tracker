@@ -1,13 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
+import ItemActionsMenu from '../ItemActionsMenu'
 
-export default function NotesPanel({
-  notes = [],
-  busy,
-  onCreateNote,
-  onDeleteNote,
-  onUpdateNote,
-}) {
+export default function NotesPanel({ notes = [], busy, onCreateNote, onDeleteNote, onUpdateNote }) {
   const [title, setTitle] = useState('')
   const [content, setContent] = useState('')
 
@@ -221,9 +216,7 @@ export default function NotesPanel({
                     {note.content ? (
                       <>
                         <div
-                          className={
-                            isExpanded ? 'dim noteContent' : 'dim noteContent collapsed'
-                          }
+                          className={isExpanded ? 'dim noteContent' : 'dim noteContent collapsed'}
                         >
                           {note.content}
                         </div>
@@ -241,39 +234,16 @@ export default function NotesPanel({
                       </>
                     ) : null}
 
-                    <div className="itemMenu noteMenu" onClick={(e) => e.stopPropagation()}>
-                      <button
-                        className="menuTrigger"
-                        type="button"
-                        disabled={busy}
-                        onClick={() => toggleMenu(note.id)}
-                        aria-label="Note actions"
-                      >
-                        ⋮
-                      </button>
-
-                      {openMenuNoteId === note.id ? (
-                        <div className="menuDropdown menuDropdownUp">
-                          <button
-                            type="button"
-                            className="menuItem"
-                            disabled={busy}
-                            onClick={() => startEditNote(note)}
-                          >
-                            Edit
-                          </button>
-
-                          <button
-                            type="button"
-                            className="menuItem danger"
-                            disabled={busy}
-                            onClick={() => requestDeleteNote(note)}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      ) : null}
-                    </div>
+                    <ItemActionsMenu
+                      busy={busy}
+                      className="noteMenu"
+                      isOpen={openMenuNoteId === note.id}
+                      menuClassName="menuDropdownUp"
+                      label="Note actions"
+                      onToggle={() => toggleMenu(note.id)}
+                      onEdit={() => startEditNote(note)}
+                      onDelete={() => requestDeleteNote(note)}
+                    />
                   </>
                 )}
               </div>

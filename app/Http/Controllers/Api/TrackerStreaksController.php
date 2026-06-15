@@ -12,7 +12,7 @@ class TrackerStreaksController extends Controller
     public function __invoke(TrackerStreaksRequest $request, StreakService $streaks)
     {
         $onlySlug = $request->query('direction');
-        $maxDays  = (int) ($request->query('days') ?? 400);
+        $maxDays = (int) ($request->query('days') ?? 400);
 
         $q = Direction::query()->orderBy('id');
         if ($onlySlug) {
@@ -26,7 +26,7 @@ class TrackerStreaksController extends Controller
         }
 
         $userId = $request->user()->id;
-        $today  = now()->startOfDay();
+        $today = now()->startOfDay();
 
         $results = $streaks->streaksForDirections(
             $userId,
@@ -41,19 +41,19 @@ class TrackerStreaksController extends Controller
 
             $rows[] = [
                 'direction' => [
-                    'id'   => $dir->id,
+                    'id' => $dir->id,
                     'slug' => $dir->slug,
                     'name' => $dir->name,
                 ],
                 'current' => $r['current'],
-                'best'    => $r['best'],
+                'best' => $r['best'],
             ];
         }
 
         return [
             'as_of' => $today->toDateString(),
-            'days'  => max(30, $maxDays),
-            'rows'  => $rows,
+            'days' => max(30, $maxDays),
+            'rows' => $rows,
         ];
     }
 }

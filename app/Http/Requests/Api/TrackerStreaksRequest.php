@@ -15,7 +15,7 @@ class TrackerStreaksRequest extends FormRequest
     {
         return [
             'direction' => ['nullable', 'string'],
-            'days'      => ['nullable', 'integer', 'min:30', 'max:2000'],
+            'days' => ['nullable', 'integer', 'min:30', 'max:2000'],
         ];
     }
 }

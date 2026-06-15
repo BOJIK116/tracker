@@ -9,7 +9,14 @@ body {
   margin: 0;
   padding: 0;
   background: #030605;
-  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 body {
@@ -34,37 +41,35 @@ body {
 }
 
 .auth-shell::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(160, 255, 210, 0.045) 0px,
-      rgba(160, 255, 210, 0.045) 1px,
-      transparent 2px,
-      transparent 6px
-    );
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(160, 255, 210, 0.045) 0px,
+    rgba(160, 255, 210, 0.045) 1px,
+    transparent 2px,
+    transparent 6px
+  );
   opacity: 0.22;
   mix-blend-mode: screen;
 }
 
 .auth-shell::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(
-      90deg,
-      transparent 0%,
-      rgba(90, 255, 170, 0.03) 18%,
-      transparent 36%,
-      transparent 64%,
-      rgba(90, 255, 170, 0.03) 82%,
-      transparent 100%
-    );
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(90, 255, 170, 0.03) 18%,
+    transparent 36%,
+    transparent 64%,
+    rgba(90, 255, 170, 0.03) 82%,
+    transparent 100%
+  );
   opacity: 0.9;
 }
 
@@ -77,8 +82,13 @@ body {
   border-radius: 32px;
   overflow: hidden;
   border: 1px solid rgba(130, 255, 196, 0.22);
-  background:
-    linear-gradient(to bottom, rgba(132, 255, 194, 0.04), rgba(132, 255, 194, 0.015) 18%, rgba(3, 15, 12, 0.88) 42%, rgba(2, 12, 10, 0.92) 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(132, 255, 194, 0.04),
+    rgba(132, 255, 194, 0.015) 18%,
+    rgba(3, 15, 12, 0.88) 42%,
+    rgba(2, 12, 10, 0.92) 100%
+  );
   box-shadow:
     0 0 0 1px rgba(130, 255, 196, 0.05),
     0 0 50px rgba(66, 255, 157, 0.07),
@@ -87,7 +97,7 @@ body {
 }
 
 .auth-card::before {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
@@ -97,18 +107,17 @@ body {
 }
 
 .auth-card::after {
-  content: "";
+  content: '';
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.012) 0px,
-      rgba(255, 255, 255, 0.012) 1px,
-      transparent 2px,
-      transparent 5px
-    );
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.012) 0px,
+    rgba(255, 255, 255, 0.012) 1px,
+    transparent 2px,
+    transparent 5px
+  );
   opacity: 0.18;
 }
 
@@ -258,7 +267,7 @@ body {
     opacity 140ms ease;
 
   box-shadow:
-    0 6px 14px rgba(82, 247, 190, 0.10),
+    0 6px 14px rgba(82, 247, 190, 0.1),
     0 0 6px rgba(82, 247, 190, 0.06);
 }
 
@@ -275,8 +284,7 @@ body {
 
 .auth-form button:active {
   transform: translateY(0);
-  box-shadow:
-    0 4px 10px rgba(82, 247, 190, 0.08);
+  box-shadow: 0 4px 10px rgba(82, 247, 190, 0.08);
 }
 
 .auth-form button:disabled {
@@ -289,7 +297,7 @@ body {
 }
 
 .auth-form button.is-loading::after {
-  content: "";
+  content: '';
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -330,7 +338,9 @@ body {
   line-height: 1.4;
   cursor: pointer;
   text-align: left;
-  transition: color 160ms ease, opacity 160ms ease;
+  transition:
+    color 160ms ease,
+    opacity 160ms ease;
 }
 
 .auth-link span {
@@ -508,87 +518,87 @@ body {
 
 /* === TABLE === */
 
-.gridWrap{
-  border:1px solid var(--line2);
+.gridWrap {
+  border: 1px solid var(--line2);
   border-radius: 10px;
-  overflow:hidden;
+  overflow: hidden;
 }
 
-.grid{
-  width:100%;
+.grid {
+  width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
 .grid th,
-.grid td{
-  border-right:1px solid var(--line2);
-  border-bottom:1px solid var(--line2);
+.grid td {
+  border-right: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
   padding: 10px 10px;
-  text-align:center;
-  box-sizing:border-box;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .grid th:first-child,
-.grid td:first-child{
+.grid td:first-child {
   width: 240px;
-  text-align:left;
+  text-align: left;
   color: var(--accent);
 }
 
-.grid th{
+.grid th {
   color: var(--muted);
-  font-weight:600;
+  font-weight: 600;
 }
 
-.grid tr:last-child td{ 
-  border-bottom:none; 
+.grid tr:last-child td {
+  border-bottom: none;
 }
 
-.grid th:last-child, 
-.grid td:last-child{ 
-  border-right:none; 
+.grid th:last-child,
+.grid td:last-child {
+  border-right: none;
 }
 
 /* === MARK BUTTONS === */
 
-.markBtn{
+.markBtn {
   width: 44px;
   height: 34px;
   border-radius: 8px;
-  border:1px solid var(--line2);
-  background: rgba(0,0,0,.18);
+  border: 1px solid var(--line2);
+  background: rgba(0, 0, 0, 0.18);
   color: var(--text);
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.markBtn.on{
-  border-color: rgba(92,255,178,.55);
-  box-shadow: 0 0 0 3px rgba(92,255,178,.10);
+.markBtn.on {
+  border-color: rgba(92, 255, 178, 0.55);
+  box-shadow: 0 0 0 3px rgba(92, 255, 178, 0.1);
 }
 
-.markBtn:disabled{ 
-  opacity:.5; 
-  cursor:not-allowed; 
+.markBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.markBtn.future { 
-  opacity: .35; 
-  cursor: not-allowed; 
+.markBtn.future {
+  opacity: 0.35;
+  cursor: not-allowed;
 }
 
-.markBtn.pending { 
-  opacity: .65; 
+.markBtn.pending {
+  opacity: 0.65;
 }
 
 /* === TODAY HIGHLIGHT === */
 
-.todayHead { 
-  background: rgba(92,255,178,.08); 
+.todayHead {
+  background: rgba(92, 255, 178, 0.08);
 }
 
-.todayCol { 
-  background: rgba(92,255,178,.05); 
+.todayCol {
+  background: rgba(92, 255, 178, 0.05);
 }
 
 /* === FIRST COLUMN === */
@@ -617,20 +627,20 @@ td.dirCell > .delBtn {
 
 .delBtn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3px 8px;
   border-radius: 10px;
   cursor: pointer;
-  opacity: .8;
+  opacity: 0.8;
 }
 
-.delBtn:hover { 
-  opacity: 1; 
+.delBtn:hover {
+  opacity: 1;
 }
 
-.delBtn:disabled { 
-  opacity: .4; 
-  cursor: not-allowed; 
+.delBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 /* === SELECT MODE === */
@@ -657,141 +667,141 @@ td.dirCell > .delBtn {
   width: 54px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(0,0,0,.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.12);
   color: var(--accent);
   cursor: pointer;
-  transition: .18s ease;
+  transition: 0.18s ease;
 }
 
 .selectBtn.active {
-  border-color: rgba(92,255,178,.55);
-  box-shadow: 0 0 0 3px rgba(92,255,178,.08);
-  background: rgba(92,255,178,.08);
+  border-color: rgba(92, 255, 178, 0.55);
+  box-shadow: 0 0 0 3px rgba(92, 255, 178, 0.08);
+  background: rgba(92, 255, 178, 0.08);
 }
 
 .selectBtn:disabled {
-  opacity: .4;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
 /* ===== WEEK PAGE ===== */
 
-:root{
-  --bg:#050707;
-  --panel:#070b0c;
-  --line:rgba(152,255,196,.22);
-  --line2:rgba(152,255,196,.12);
-  --text:#d7ffe9;
-  --muted:rgba(215,255,233,.68);
-  --accent:#5cffb2;
-  --accent2:#3ddc97;
-  --warn:#ffd36a;
+:root {
+  --bg: #050707;
+  --panel: #070b0c;
+  --line: rgba(152, 255, 196, 0.22);
+  --line2: rgba(152, 255, 196, 0.12);
+  --text: #d7ffe9;
+  --muted: rgba(215, 255, 233, 0.68);
+  --accent: #5cffb2;
+  --accent2: #3ddc97;
+  --warn: #ffd36a;
 }
 
-.container{
+.container {
   max-width: 980px;
   margin: 42px auto;
   padding: 0 16px;
 }
 
-.term{
-  border:1px solid var(--line);
-  background: linear-gradient(180deg, rgba(7,11,12,.88), rgba(5,7,7,.86));
+.term {
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, rgba(7, 11, 12, 0.88), rgba(5, 7, 7, 0.86));
   border-radius: 12px;
-  box-shadow: 0 24px 80px rgba(0,0,0,.55);
-  overflow:hidden;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  overflow: hidden;
 }
 
-.termTop{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
+.termTop {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px 14px;
-  border-bottom:1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
   color: var(--muted);
 }
 
-.badge{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
-.dot{
-  width:8px;
-  height:8px;
-  border-radius:999px;
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
   background: var(--accent);
-  box-shadow: 0 0 0 3px rgba(92,255,178,.12);
+  box-shadow: 0 0 0 3px rgba(92, 255, 178, 0.12);
 }
 
-.keyBtn{
-  display:inline-flex;
-  gap:8px;
-  align-items:center;
-  border:1px solid var(--line2);
-  background: rgba(0,0,0,.15);
+.keyBtn {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--line2);
+  background: rgba(0, 0, 0, 0.15);
   color: var(--text);
   padding: 6px 10px;
   border-radius: 8px;
-  cursor:pointer;
+  cursor: pointer;
   font: inherit;
 }
 
-.keyBtn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
+.keyBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
-.key{
-  font-weight:700;
-  color:#00150d;
+.key {
+  font-weight: 700;
+  color: #00150d;
   background: var(--accent);
-  border-radius:6px;
+  border-radius: 6px;
   padding: 2px 6px;
 }
 
-.termBody{
+.termBody {
   padding: 16px 16px 18px;
 }
 
-.hTitle{
-  display:flex;
-  align-items:baseline;
-  gap:10px;
-  font-weight:700;
+.hTitle {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  font-weight: 700;
   text-transform: lowercase;
 }
 
-.hTitle .dim{
+.hTitle .dim {
   color: var(--muted);
-  font-weight:500;
+  font-weight: 500;
 }
 
-.hr{
-  height:1px;
+.hr {
+  height: 1px;
   background: linear-gradient(90deg, transparent, var(--line), transparent);
   margin: 14px 0;
 }
 
-.meta{
+.meta {
   color: var(--muted);
   margin: 8px 0 14px;
 }
 
-.alert{
+.alert {
   margin: 10px 0 14px;
   padding: 12px 14px;
   border-radius: 10px;
-  border: 1px solid rgba(255,120,120,.16);
-  background: rgba(255,120,120,.07);
+  border: 1px solid rgba(255, 120, 120, 0.16);
+  background: rgba(255, 120, 120, 0.07);
   color: #ffb1b1;
 }
 
-.good{
+.good {
   color: var(--accent);
-  font-weight:700;
+  font-weight: 700;
 }
 
 .toolbarRow {
@@ -809,30 +819,30 @@ td.dirCell > .delBtn {
   padding-bottom: 12px;
 }
 
-.navRow{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+.navRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   color: var(--muted);
   margin-top: 14px;
   gap: 12px;
 }
 
-.navBtn{
-  border:none;
+.navBtn {
+  border: none;
   background: transparent;
   color: var(--accent);
-  cursor:pointer;
+  cursor: pointer;
   font: inherit;
 }
 
-.navBtn:hover{
+.navBtn:hover {
   text-decoration: underline;
 }
 
-.navBtn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
+.navBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
   text-decoration: none;
 }
 
@@ -841,10 +851,10 @@ td.dirCell > .delBtn {
 }
 
 .kpiRow {
-  display:flex;
+  display: flex;
   gap: 14px;
   flex-wrap: wrap;
-  align-items:center;
+  align-items: center;
   margin-top: 10px;
   color: var(--muted);
 }
@@ -852,24 +862,24 @@ td.dirCell > .delBtn {
 /* ===== CREATE DIRECTION ===== */
 
 .createDirForm {
-  display:flex;
-  align-items:center;
-  gap:10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   padding: 8px 0 12px;
-  flex-wrap:wrap;
+  flex-wrap: wrap;
 }
 
 .createDirControls {
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  flex:0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
 }
 
 .createDirInput {
-  width:260px;
-  height:36px;
-  padding:0 10px;
+  width: 260px;
+  height: 36px;
+  padding: 0 10px;
   background: rgba(5, 20, 17, 0.8);
   border: 1px solid rgba(92, 255, 201, 0.15);
   border-radius: 8px;
@@ -908,87 +918,87 @@ td.dirCell > .delBtn {
 
 /* ===== TABLE ===== */
 
-.gridWrap{
-  border:1px solid var(--line2);
+.gridWrap {
+  border: 1px solid var(--line2);
   border-radius: 10px;
-  overflow:hidden;
+  overflow: hidden;
 }
 
-.grid{
-  width:100%;
+.grid {
+  width: 100%;
   border-collapse: collapse;
   table-layout: fixed;
 }
 
 .grid th,
-.grid td{
-  border-right:1px solid var(--line2);
-  border-bottom:1px solid var(--line2);
+.grid td {
+  border-right: 1px solid var(--line2);
+  border-bottom: 1px solid var(--line2);
   padding: 10px 10px;
-  text-align:center;
-  box-sizing:border-box;
+  text-align: center;
+  box-sizing: border-box;
 }
 
 .grid th:first-child,
-.grid td:first-child{
+.grid td:first-child {
   width: 240px;
-  text-align:left;
+  text-align: left;
   color: var(--accent);
 }
 
-.grid th{
+.grid th {
   color: var(--muted);
-  font-weight:600;
+  font-weight: 600;
 }
 
-.grid tr:last-child td{
-  border-bottom:none;
+.grid tr:last-child td {
+  border-bottom: none;
 }
 
 .grid th:last-child,
-.grid td:last-child{
-  border-right:none;
+.grid td:last-child {
+  border-right: none;
 }
 
 /* ===== TODAY ===== */
 
 .todayHead {
-  background: rgba(92,255,178,.08);
+  background: rgba(92, 255, 178, 0.08);
 }
 
 .todayCol {
-  background: rgba(92,255,178,.05);
+  background: rgba(92, 255, 178, 0.05);
 }
 
 /* ===== MARK BUTTONS ===== */
 
-.markBtn{
+.markBtn {
   width: 44px;
   height: 34px;
   border-radius: 8px;
-  border:1px solid var(--line2);
-  background: rgba(0,0,0,.18);
+  border: 1px solid var(--line2);
+  background: rgba(0, 0, 0, 0.18);
   color: var(--text);
-  cursor:pointer;
+  cursor: pointer;
 }
 
-.markBtn.on{
-  border-color: rgba(92,255,178,.55);
-  box-shadow: 0 0 0 3px rgba(92,255,178,.10);
+.markBtn.on {
+  border-color: rgba(92, 255, 178, 0.55);
+  box-shadow: 0 0 0 3px rgba(92, 255, 178, 0.1);
 }
 
-.markBtn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
+.markBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .markBtn.future {
-  opacity: .35;
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
 .markBtn.pending {
-  opacity: .65;
+  opacity: 0.65;
 }
 
 /* ===== FIRST COLUMN ===== */
@@ -1029,11 +1039,11 @@ td.dirCell > .delBtn {
 
 .delBtn {
   background: transparent;
-  border: 1px solid rgba(255,255,255,.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   padding: 3px 8px;
   border-radius: 10px;
   cursor: pointer;
-  opacity: .8;
+  opacity: 0.8;
   color: var(--text);
 }
 
@@ -1042,7 +1052,7 @@ td.dirCell > .delBtn {
 }
 
 .delBtn:disabled {
-  opacity: .4;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -1058,21 +1068,21 @@ td.dirCell > .delBtn {
   width: 54px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,.16);
-  background: rgba(0,0,0,.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(0, 0, 0, 0.12);
   color: var(--accent);
   cursor: pointer;
-  transition: .18s ease;
+  transition: 0.18s ease;
 }
 
 .selectBtn.active {
-  border-color: rgba(92,255,178,.55);
-  box-shadow: 0 0 0 3px rgba(92,255,178,.08);
-  background: rgba(92,255,178,.08);
+  border-color: rgba(92, 255, 178, 0.55);
+  box-shadow: 0 0 0 3px rgba(92, 255, 178, 0.08);
+  background: rgba(92, 255, 178, 0.08);
 }
 
 .selectBtn:disabled {
-  opacity: .4;
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
@@ -1091,11 +1101,7 @@ td.dirCell > .delBtn {
   max-width: calc(100% - 32px);
   padding: 24px;
   border-radius: 16px;
-  background: linear-gradient(
-    180deg,
-    rgba(8, 22, 18, 0.95),
-    rgba(4, 14, 11, 0.98)
-  );
+  background: linear-gradient(180deg, rgba(8, 22, 18, 0.95), rgba(4, 14, 11, 0.98));
   border: 1px solid rgba(118, 255, 180, 0.18);
   box-shadow:
     0 0 0 1px rgba(118, 255, 180, 0.05) inset,

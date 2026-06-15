@@ -33,7 +33,7 @@ class TrackerWeekController extends Controller
             ->where('iso_year', $year)
             ->where('iso_week', $week)
             ->whereBetween('iso_weekday', [1, 7])
-            ->when(!empty($directionIds), fn ($q) => $q->whereIn('direction_id', $directionIds))
+            ->when(! empty($directionIds), fn ($q) => $q->whereIn('direction_id', $directionIds))
             ->get(['direction_id', 'iso_weekday', 'completed']);
 
         // карта статусов: [direction_id][weekday] = bool

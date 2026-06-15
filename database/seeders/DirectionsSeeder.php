@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
-use Illuminate\Database\Seeder;
 use App\Models\Direction;
+use Illuminate\Database\Seeder;
 
 class DirectionsSeeder extends Seeder
 {
@@ -14,21 +13,14 @@ class DirectionsSeeder extends Seeder
     public function run(): void
     {
         $items = [
-        ['name' => 'Разработка', 'slug' => 'development' ],
-        ['name' => 'Упражнения', 'slug' => 'fitnes'],
-        ['name' => 'Собаки',    'slug' => 'dogs'],
+            ['name' => 'Разработка', 'slug' => 'development'],
+            ['name' => 'Упражнения', 'slug' => 'fitnes'],
+            ['name' => 'Собаки',    'slug' => 'dogs'],
         ];
-    
+
         foreach ($items as $item) {
             Direction::firstOrCreate(['slug' => $item['slug']], $item);
         }
-    
-    }   
+
+    }
 }
-
-
-
-
-
-
-

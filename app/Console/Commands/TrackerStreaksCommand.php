@@ -17,12 +17,13 @@ class TrackerStreaksCommand extends Command
 
     public function handle(StreakService $streaks): int
     {
-        $userId   = (int) ($this->option('user') ?? 1);
+        $userId = (int) ($this->option('user') ?? 1);
         $onlySlug = $this->option('direction');
-        $daysRaw  = (int) ($this->option('days') ?? 400);
+        $daysRaw = (int) ($this->option('days') ?? 400);
 
         if ($userId <= 0) {
             $this->error('Некорректный --user (должен быть > 0).');
+
             return self::FAILURE;
         }
 
@@ -34,6 +35,7 @@ class TrackerStreaksCommand extends Command
 
         if ($directions->isEmpty()) {
             $this->warn('Нет направлений. Запусти сидер DirectionsSeeder.');
+
             return self::FAILURE;
         }
 
@@ -49,6 +51,7 @@ class TrackerStreaksCommand extends Command
 
             if ($selected === 'Выход') {
                 $this->info('Выход.');
+
                 return self::SUCCESS;
             }
 
@@ -61,7 +64,8 @@ class TrackerStreaksCommand extends Command
             $direction = $directions->firstWhere('slug', $onlySlug);
 
             if (! $direction) {
-                $this->warn('Направление со slug не найдено: ' . $onlySlug);
+                $this->warn('Направление со slug не найдено: '.$onlySlug);
+
                 return self::FAILURE;
             }
 
@@ -70,9 +74,9 @@ class TrackerStreaksCommand extends Command
 
         $today = now()->startOfDay();
 
-        $this->info('Стрики на ' . $today->toDateString());
-        $this->info('User ID: ' . $userId);
-        $this->info('Окно поиска (дней): ' . $maxDays);
+        $this->info('Стрики на '.$today->toDateString());
+        $this->info('User ID: '.$userId);
+        $this->info('Окно поиска (дней): '.$maxDays);
         $this->line('');
 
         $results = $streaks->streaksForDirections(

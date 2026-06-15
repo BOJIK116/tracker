@@ -11,12 +11,12 @@ export default function AuthPage({
   onRegister,
 }) {
   function handleSubmit(e) {
-    e.preventDefault();
+    e.preventDefault()
 
-    if (mode === "login") {
-      onLogin();
+    if (mode === 'login') {
+      onLogin()
     } else {
-      onRegister();
+      onRegister()
     }
   }
 
@@ -40,9 +40,9 @@ export default function AuthPage({
             </div>
 
             <p className="auth-subtitle">
-              {mode === "login"
-                ? "Sign in to continue your weekly activity tracking."
-                : "Create an account to start tracking your progress."}
+              {mode === 'login'
+                ? 'Sign in to continue your weekly activity tracking.'
+                : 'Create an account to start tracking your progress.'}
             </p>
           </div>
 
@@ -63,16 +63,8 @@ export default function AuthPage({
               required
             />
 
-            <button
-              type="submit"
-              className={loading ? "is-loading" : ""}
-              disabled={loading}
-            >
-              {loading
-                ? "Connecting..."
-                : mode === "login"
-                ? "Login"
-                : "Create account"}
+            <button type="submit" className={loading ? 'is-loading' : ''} disabled={loading}>
+              {loading ? 'Connecting...' : mode === 'login' ? 'Login' : 'Create account'}
             </button>
           </form>
 
@@ -81,28 +73,21 @@ export default function AuthPage({
           <button
             className="auth-link"
             type="button"
-            onClick={() =>
-              setMode(mode === "login" ? "register" : "login")
-            }
+            onClick={() => setMode(mode === 'login' ? 'register' : 'login')}
           >
-            {mode === "login"
-              ? "No account? Register"
-              : "Already have an account? Login"}
+            {mode === 'login' ? 'No account? Register' : 'Already have an account? Login'}
           </button>
         </div>
       </div>
     </div>
-  );
+  )
   function handleSubmit(e) {
-  e.preventDefault();
+    e.preventDefault()
 
-  if (mode === "login") {
-
-    onLogin();
-  
-  } else {
-
-    onRegister();
+    if (mode === 'login') {
+      onLogin()
+    } else {
+      onRegister()
+    }
   }
-}
 }

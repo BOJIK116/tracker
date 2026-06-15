@@ -29,7 +29,6 @@ export async function api(path, { method = 'GET', body } = {}) {
   }
 
   return data
-
 }
 
 export function getNotes() {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import ConfirmModal from '../ConfirmModal'
+import ItemActionsMenu from '../ItemActionsMenu'
 
 export default function TodoPanel({
   todos = [],
@@ -136,9 +137,7 @@ export default function TodoPanel({
             autoFocus
           />
         ) : (
-          <span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>
-            {todo.title}
-          </span>
+          <span className={todo.is_done ? 'todoTitle done' : 'todoTitle'}>{todo.title}</span>
         )}
 
         {isEditing ? (
@@ -162,39 +161,14 @@ export default function TodoPanel({
             </button>
           </div>
         ) : (
-          <div className="itemMenu" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="menuTrigger"
-              type="button"
-              disabled={busy}
-              onClick={() => toggleMenu(todo.id)}
-              aria-label="Todo actions"
-            >
-              ⋮
-            </button>
-
-            {openMenuTodoId === todo.id ? (
-              <div className="menuDropdown">
-                <button
-                  type="button"
-                  className="menuItem"
-                  disabled={busy}
-                  onClick={() => startEditTodo(todo)}
-                >
-                  Edit
-                </button>
-
-                <button
-                  type="button"
-                  className="menuItem danger"
-                  disabled={busy}
-                  onClick={() => requestDeleteTodo(todo)}
-                >
-                  Delete
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <ItemActionsMenu
+            busy={busy}
+            isOpen={openMenuTodoId === todo.id}
+            label="Todo actions"
+            onToggle={() => toggleMenu(todo.id)}
+            onEdit={() => startEditTodo(todo)}
+            onDelete={() => requestDeleteTodo(todo)}
+          />
         )}
       </div>
     )
@@ -239,9 +213,7 @@ export default function TodoPanel({
             disabled={busy}
             onClick={() => setShowCompleted((value) => !value)}
           >
-            {showCompleted
-              ? 'Hide completed'
-              : `Show completed (${completedTodos.length})`}
+            {showCompleted ? 'Hide completed' : `Show completed (${completedTodos.length})`}
           </button>
         ) : null}
 

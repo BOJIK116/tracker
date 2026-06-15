@@ -1,17 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { clearToken, getToken, setToken } from '../lib/auth'
 import { getIsoWeek, isFutureDate, shiftIsoWeek } from '../lib/date'
-import {
-  api,
-  getNotes,
-  createNote,
-  deleteNote,
-  updateNote,
-  getTodos,
-  createTodo,
-  updateTodo,
-  deleteTodo,
-} from '../lib/api'
+import { api } from '../lib/api'
+import { useNotes } from './useNotes'
+import { useTodos } from './useTodos'
 
 export function useTrackerApp() {
   const [mode, setMode] = useState('login')
@@ -21,8 +13,8 @@ export function useTrackerApp() {
   const [me, setMe] = useState(null)
   const [week, setWeek] = useState(null)
   const [streaks, setStreaks] = useState(null)
-  const [notes, setNotes] = useState([])
-  const [todos, setTodos] = useState([])
+  const { notes, setNotes, loadNotes, createNote, deleteNote, updateNote } = useNotes()
+  const { todos, setTodos, loadTodos, createTodo, toggleTodo, deleteTodo, updateTodo } = useTodos()
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -30,20 +22,19 @@ export function useTrackerApp() {
   const SELECTED_WEEK_KEY = 'tracker_selected_week'
 
   const [selected, setSelected] = useState(() => {
-  try {
-    const saved = localStorage.getItem(SELECTED_WEEK_KEY)
+    try {
+      const saved = localStorage.getItem(SELECTED_WEEK_KEY)
 
-    if (saved) {
-      const parsed = JSON.parse(saved)
+      if (saved) {
+        const parsed = JSON.parse(saved)
 
-      if (parsed?.year && parsed?.week) {
-        return parsed
+        if (parsed?.year && parsed?.week) {
+          return parsed
+        }
       }
-    }
-  } catch {
-  }
+    } catch {}
 
-  return getIsoWeek(new Date())
+    return getIsoWeek(new Date())
   })
 
   const [pending, setPending] = useState(() => new Set())
@@ -66,81 +57,9 @@ export function useTrackerApp() {
     setStreaks(data)
   }
 
-  async function loadNotes() {
-    const data = await getNotes()
-
-    setNotes(Array.isArray(data) ? data : [])
-  }
-
-  async function loadTodos() {
-    const data = await getTodos()
-
-    setTodos(Array.isArray(data) ? data : [])
-  }
-
-  async function handleCreateNote(data) {
-    const newNote = await createNote(data)
-
-    setNotes((prev) => [newNote, ...prev])
-
-    return newNote
-  }
-
-  async function handleDeleteNote(id) {
-    await deleteNote(id)
-
-    setNotes((prev) => prev.filter((note) => note.id !== id))
-  }
-
-  async function handleUpdateNote(id, data) {
-    const updatedNote = await updateNote(id, data)
-
-    setNotes((prev) =>
-      prev.map((note) => (note.id === updatedNote.id ? updatedNote : note))
-    )
-
-    return updatedNote
-  }
-
-  async function handleCreateTodo(data) {
-    const newTodo = await createTodo(data)
-
-    setTodos((prev) => [newTodo, ...prev])
-
-    return newTodo
-  }
-
-  async function handleToggleTodo(todo) {
-    const updatedTodo = await updateTodo(todo.id, {
-      is_done: !todo.is_done,
-    })
-
-    setTodos((prev) =>
-      prev.map((item) => (item.id === updatedTodo.id ? updatedTodo : item))
-    )
-
-    return updatedTodo
-  }
-
-  async function handleDeleteTodo(id) {
-    await deleteTodo(id)
-
-    setTodos((prev) => prev.filter((todo) => todo.id !== id))
-  }
-
-  async function handleUpdateTodo(id, data) {
-  const updatedTodo = await updateTodo(id, data)
-
-  setTodos((prev) =>
-    prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
-  )
-
-  return updatedTodo
-  }
-
   async function reloadWeekOnly(curr = selected) {
     const weekData = await api(
-      `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
+      `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`,
     )
 
     setWeek(weekData)
@@ -159,7 +78,7 @@ export function useTrackerApp() {
       setMe(meData)
 
       const weekData = await api(
-        `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`
+        `/tracker/week?year=${encodeURIComponent(curr.year)}&week=${encodeURIComponent(curr.week)}`,
       )
 
       setWeek(weekData)
@@ -181,24 +100,14 @@ export function useTrackerApp() {
   }
 
   useEffect(() => {
-  function onKey(e) {
-    if (e.key === 'ArrowLeft') prevWeek()
-    if (e.key === 'ArrowRight') nextWeek()
-  }
+    function onKey(e) {
+      if (e.key === 'ArrowLeft') prevWeek()
+      if (e.key === 'ArrowRight') nextWeek()
+    }
 
-  async function handleUpdateTodo(id, data) {
-  const updatedTodo = await updateTodo(id, data)
+    window.addEventListener('keydown', onKey)
 
-  setTodos((prev) =>
-    prev.map((todo) => (todo.id === updatedTodo.id ? updatedTodo : todo))
-  )
-
-  return updatedTodo
-}
-
-  window.addEventListener('keydown', onKey)
-
-  return () => window.removeEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
   }, [])
 
   useEffect(() => {
@@ -232,9 +141,8 @@ export function useTrackerApp() {
   }, [selected.year, selected.week])
 
   useEffect(() => {
-  localStorage.setItem(SELECTED_WEEK_KEY, JSON.stringify(selected))
+    localStorage.setItem(SELECTED_WEEK_KEY, JSON.stringify(selected))
   }, [selected.year, selected.week])
-
 
   async function login() {
     setError('')
@@ -435,14 +343,14 @@ export function useTrackerApp() {
     confirmDeleteDirection,
 
     loadNotes,
-    onCreateNote: handleCreateNote,
-    onDeleteNote: handleDeleteNote,
-    onUpdateNote: handleUpdateNote,
+    onCreateNote: createNote,
+    onDeleteNote: deleteNote,
+    onUpdateNote: updateNote,
 
     loadTodos,
-    onCreateTodo: handleCreateTodo,
-    onToggleTodo: handleToggleTodo,
-    onDeleteTodo: handleDeleteTodo,
-    onUpdateTodo: handleUpdateTodo,
+    onCreateTodo: createTodo,
+    onToggleTodo: toggleTodo,
+    onDeleteTodo: deleteTodo,
+    onUpdateTodo: updateTodo,
   }
 }

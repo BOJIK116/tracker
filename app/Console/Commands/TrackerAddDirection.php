@@ -2,13 +2,14 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Direction;
+use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 
 class TrackerAddDirection extends Command
 {
     protected $signature = 'tracker:add-direction {name?}';
+
     protected $description = 'Добавляет новое направление в трекер';
 
     public function handle()

@@ -17,14 +17,18 @@ function extractBest(s) {
 export default function WeekStats({ week, doneCells, totalCells, pct, doneToday, streaks }) {
   return (
     <div className="kpiRow">
-      <span>ISO {week.year} / week {week.week}</span>
-
       <span>
-        Ready: <span className="good">{doneCells}</span>/<span className="good">{totalCells}</span> ({pct}%)
+        ISO {week.year} / week {week.week}
       </span>
 
       <span>
-        Today: <span className="good">{doneToday}</span>/<span className="good">{week.rows.length}</span>
+        Ready: <span className="good">{doneCells}</span>/<span className="good">{totalCells}</span>{' '}
+        ({pct}%)
+      </span>
+
+      <span>
+        Today: <span className="good">{doneToday}</span>/
+        <span className="good">{week.rows.length}</span>
       </span>
 
       <span>

@@ -2,35 +2,37 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
 use App\Models\Direction;
 use App\Models\Track;
+use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 
 class TrackerFillTodayCommand extends Command
 {
     protected $signature = 'tracker:fill-today {--user=1}';
+
     protected $description = 'Заполняет учебный трекер за текущий день';
 
     public function handle(): int
     {
-        $now        = now();
-        $isoYear    = $now->isoWeekYear();
-        $isoWeek    = $now->isoWeek();
+        $now = now();
+        $isoYear = $now->isoWeekYear();
+        $isoWeek = $now->isoWeek();
         $isoWeekday = $now->isoWeekday();
 
         $userId = (int) $this->option('user');
 
-        $this->info('Пользователь ID: ' . $userId);
-        $this->info('Год: ' . $isoYear);
-        $this->info('Неделя: ' . $isoWeek);
-        $this->info('День недели: ' . $isoWeekday);
+        $this->info('Пользователь ID: '.$userId);
+        $this->info('Год: '.$isoYear);
+        $this->info('Неделя: '.$isoWeek);
+        $this->info('День недели: '.$isoWeekday);
         $this->info('');
 
         $directions = Direction::orderBy('id')->get();
 
         if ($directions->isEmpty()) {
             $this->warn('Нет направлений. Запусти сидер DirectionsSeeder.');
+
             return self::FAILURE;
         }
 
@@ -47,6 +49,7 @@ class TrackerFillTodayCommand extends Command
 
         if ($action === 'Выход') {
             $this->info('Выход.');
+
             return self::SUCCESS;
         }
 
@@ -54,6 +57,7 @@ class TrackerFillTodayCommand extends Command
 
             if (! $this->confirm('Точно сбросить отметки за сегодня?')) {
                 $this->info('Отмена.');
+
                 return self::SUCCESS;
             }
 
@@ -65,6 +69,7 @@ class TrackerFillTodayCommand extends Command
                 ->update(['completed' => 0]);
 
             $this->info('Отметки за сегодня сброшены.');
+
             return self::SUCCESS;
         }
 
@@ -72,11 +77,13 @@ class TrackerFillTodayCommand extends Command
 
             if (! $this->confirm('Ты точно хочешь удалить ВЕСЬ прогресс?')) {
                 $this->info('Отмена.');
+
                 return self::SUCCESS;
             }
 
             if (! $this->confirm('Последнее предупреждение. Прогресс будет удалён без возможности восстановления. Продолжить?')) {
                 $this->info('Отмена.');
+
                 return self::SUCCESS;
             }
 
@@ -87,6 +94,7 @@ class TrackerFillTodayCommand extends Command
             DB::statement('ALTER TABLE tracks AUTO_INCREMENT = 1');
 
             $this->info('Весь прогресс сброшен.');
+
             return self::SUCCESS;
         }
 
@@ -101,6 +109,7 @@ class TrackerFillTodayCommand extends Command
 
             if ($answer === 'выход') {
                 $this->info('Выход.');
+
                 return self::SUCCESS;
             }
 
@@ -108,14 +117,14 @@ class TrackerFillTodayCommand extends Command
 
             Track::updateOrCreate(
                 [
-                    'user_id'      => $userId,
+                    'user_id' => $userId,
                     'direction_id' => $direction->id,
-                    'iso_year'     => $isoYear,
-                    'iso_week'     => $isoWeek,
-                    'iso_weekday'  => $isoWeekday,
+                    'iso_year' => $isoYear,
+                    'iso_week' => $isoWeek,
+                    'iso_weekday' => $isoWeekday,
                 ],
                 [
-                    'completed'    => $completed,
+                    'completed' => $completed,
                 ]
             );
         }

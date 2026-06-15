@@ -3,17 +3,15 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\StoreNoteRequest;
 use App\Models\Note;
-use App\Model\App\Models\User;
+use Illuminate\Http\Request;
 
 class NoteController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    
     public function index()
     {
         return response()->json(auth()->user()->notes()->get());
@@ -22,18 +20,18 @@ class NoteController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-   public function store(StoreNoteRequest $request)
-{
-    $data = $request->validated();
+    public function store(StoreNoteRequest $request)
+    {
+        $data = $request->validated();
 
-    $note = Note::create([
-        'title' => $data['title'],
-        'content' => $data['content'] ?? null,
-        'user_id' => $request->user()->id,
-    ]);
+        $note = Note::create([
+            'title' => $data['title'],
+            'content' => $data['content'] ?? null,
+            'user_id' => $request->user()->id,
+        ]);
 
-    return response()->json($note, 201);
-}
+        return response()->json($note, 201);
+    }
 
     /**
      * Display the specified resource.

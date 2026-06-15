@@ -47,7 +47,9 @@ export default function WeekGrid({
                     className={[
                       'selectBtn',
                       selectedDirections?.includes(row.direction.id) ? 'active' : '',
-                    ].filter(Boolean).join(' ')}
+                    ]
+                      .filter(Boolean)
+                      .join(' ')}
                     disabled={busy}
                     onClick={() => onToggleDirectionSelection?.(row.direction.id)}
                     title="Select direction"
@@ -78,7 +80,9 @@ export default function WeekGrid({
                         val ? 'on' : '',
                         future ? 'future' : '',
                         isPending ? 'pending' : '',
-                      ].filter(Boolean).join(' ')}
+                      ]
+                        .filter(Boolean)
+                        .join(' ')}
                       disabled={busy || future || isPending}
                       onClick={() => onToggle(row.direction.id, d.iso_weekday, !val)}
                     >

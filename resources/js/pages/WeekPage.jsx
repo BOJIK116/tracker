@@ -67,9 +67,7 @@ export default function WeekPage({
 
   function toggleDirectionSelection(directionId) {
     setSelectedDirections((prev) =>
-      prev.includes(directionId)
-        ? prev.filter((id) => id !== directionId)
-        : [...prev, directionId]
+      prev.includes(directionId) ? prev.filter((id) => id !== directionId) : [...prev, directionId],
     )
   }
 
@@ -107,28 +105,28 @@ export default function WeekPage({
     onLogout?.()
   }
 
-    useEffect(() => {
-  function onKey(e) {
-    if (e.key !== 'Escape') return
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key !== 'Escape') return
 
-    if (confirmDeleteOpen) {
-      cancelDeleteSelected()
-      return
+      if (confirmDeleteOpen) {
+        cancelDeleteSelected()
+        return
+      }
+
+      if (confirmLogoutOpen) {
+        cancelLogout()
+        return
+      }
+
+      requestLogout()
     }
 
-    if (confirmLogoutOpen) {
-      cancelLogout()
-      return
-    }
+    window.addEventListener('keydown', onKey)
 
-    requestLogout()
-  }
+    return () => window.removeEventListener('keydown', onKey)
+  }, [confirmDeleteOpen, confirmLogoutOpen])
 
-  window.addEventListener('keydown', onKey)
-
-  return () => window.removeEventListener('keydown', onKey)
-}, [confirmDeleteOpen, confirmLogoutOpen])
-  
   return (
     <>
       <div className="container">

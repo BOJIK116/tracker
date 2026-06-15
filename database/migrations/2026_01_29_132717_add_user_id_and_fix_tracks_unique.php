@@ -11,7 +11,7 @@ return new class extends Migration
     {
         // 1) Add user_id if it doesn't exist (nullable for now)
         Schema::table('tracks', function (Blueprint $table) {
-            if (!Schema::hasColumn('tracks', 'user_id')) {
+            if (! Schema::hasColumn('tracks', 'user_id')) {
                 $table->unsignedBigInteger('user_id')->nullable()->after('id');
             }
         });
@@ -37,7 +37,7 @@ return new class extends Migration
 
         // 5) Drop old unique (without user_id) if it exists
         $oldUnique = DB::select("SHOW INDEX FROM tracks WHERE Key_name = 'tracks_unique_day_per_direction'");
-        if (!empty($oldUnique)) {
+        if (! empty($oldUnique)) {
             Schema::table('tracks', function (Blueprint $table) {
                 $table->dropUnique('tracks_unique_day_per_direction');
             });
@@ -63,14 +63,14 @@ return new class extends Migration
 
         // Drop helper indexes if present
         $userIdx = DB::select("SHOW INDEX FROM tracks WHERE Key_name = 'tracks_user_id_idx'");
-        if (!empty($userIdx)) {
+        if (! empty($userIdx)) {
             Schema::table('tracks', function (Blueprint $table) {
                 $table->dropIndex('tracks_user_id_idx');
             });
         }
 
         $dirIdx = DB::select("SHOW INDEX FROM tracks WHERE Key_name = 'tracks_direction_id_idx'");
-        if (!empty($dirIdx)) {
+        if (! empty($dirIdx)) {
             Schema::table('tracks', function (Blueprint $table) {
                 $table->dropIndex('tracks_direction_id_idx');
             });

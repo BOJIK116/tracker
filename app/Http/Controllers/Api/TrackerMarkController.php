@@ -29,14 +29,14 @@ class TrackerMarkController extends Controller
 
         Track::updateOrCreate(
             [
-                'user_id'      => $userId,
+                'user_id' => $userId,
                 'direction_id' => $directionId,
-                'iso_year'     => $date->isoWeekYear(),
-                'iso_week'     => $date->isoWeek(),
-                'iso_weekday'  => $date->isoWeekday(),
+                'iso_year' => $date->isoWeekYear(),
+                'iso_week' => $date->isoWeek(),
+                'iso_weekday' => $date->isoWeekday(),
             ],
             [
-                'completed'    => (bool) $data['completed'],
+                'completed' => (bool) $data['completed'],
             ]
         );
 

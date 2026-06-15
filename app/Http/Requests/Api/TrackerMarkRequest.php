@@ -15,8 +15,8 @@ class TrackerMarkRequest extends FormRequest
     {
         return [
             'direction_id' => ['required', 'integer', 'exists:directions,id'],
-            'date'         => ['required', 'date'],
-            'completed'    => ['required', 'boolean'],
+            'date' => ['required', 'date'],
+            'completed' => ['required', 'boolean'],
         ];
     }
 }

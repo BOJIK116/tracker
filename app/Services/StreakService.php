@@ -28,7 +28,7 @@ class StreakService
 
             $out[$directionId] = [
                 'current' => $this->currentStreakFromMap($directionId, $statusMap, $today, $maxDays),
-                'best'    => $this->bestStreakFromMap($directionId, $statusMap, $from, $maxDays),
+                'best' => $this->bestStreakFromMap($directionId, $statusMap, $from, $maxDays),
             ];
         }
 
@@ -49,8 +49,8 @@ class StreakService
         for ($i = 0; $i < $days; $i++) {
             $d = $from->copy()->addDays($i);
 
-            $y  = $d->isoWeekYear();
-            $w  = $d->isoWeek();
+            $y = $d->isoWeekYear();
+            $w = $d->isoWeek();
             $wd = $d->isoWeekday();
             $dateKey = $d->toDateString();
 

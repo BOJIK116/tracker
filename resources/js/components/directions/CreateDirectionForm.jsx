@@ -56,7 +56,11 @@ export default function CreateDirectionForm({ disabled, onCreated }) {
         </div>
       </form>
 
-      {err ? <div className="alert" style={{ marginTop: 12 }}>{err}</div> : null}
+      {err ? (
+        <div className="alert" style={{ marginTop: 12 }}>
+          {err}
+        </div>
+      ) : null}
     </div>
   )
 }

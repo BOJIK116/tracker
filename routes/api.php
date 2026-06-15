@@ -1,14 +1,13 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DirectionController;
-use App\Http\Controllers\Api\TrackerWeekController;
-use App\Http\Controllers\Api\TrackerMarkController;
-use App\Http\Controllers\Api\TrackerStreaksController;
 use App\Http\Controllers\Api\NoteController;
 use App\Http\Controllers\Api\TodoController;
-
+use App\Http\Controllers\Api\TrackerMarkController;
+use App\Http\Controllers\Api\TrackerStreaksController;
+use App\Http\Controllers\Api\TrackerWeekController;
+use Illuminate\Support\Facades\Route;
 
 Route::get('/ping', fn () => ['ok' => true]);
 
@@ -24,9 +23,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/tracker/streaks', TrackerStreaksController::class);
 
     Route::apiResource('directions', DirectionController::class)
-    ->only(['index', 'store', 'destroy']);
+        ->only(['index', 'store', 'destroy']);
     Route::apiResource('notes', NoteController::class);
 
     Route::apiResource('todos', TodoController::class);
 });
-

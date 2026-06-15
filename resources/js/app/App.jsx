@@ -59,7 +59,12 @@ export default function App() {
               <span>user@host: ~/tasks</span>
             </div>
 
-            <button className="keyBtn" onClick={tracker.logout} disabled={tracker.loading} type="button">
+            <button
+              className="keyBtn"
+              onClick={tracker.logout}
+              disabled={tracker.loading}
+              type="button"
+            >
               <span className="key">ESC</span>
               <span>logout</span>
             </button>

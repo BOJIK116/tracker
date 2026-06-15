@@ -21,13 +21,14 @@ class TrackerShowWeekCommand extends Command
     {
         $now = now();
 
-        $isoYear   = (int) ($this->option('year') ?? $now->isoWeekYear());
-        $isoWeek   = (int) ($this->option('week') ?? $now->isoWeek());
-        $onlySlug  = $this->option('direction');
-        $userId    = (int) ($this->option('user') ?? 1);
+        $isoYear = (int) ($this->option('year') ?? $now->isoWeekYear());
+        $isoWeek = (int) ($this->option('week') ?? $now->isoWeek());
+        $onlySlug = $this->option('direction');
+        $userId = (int) ($this->option('user') ?? 1);
 
         if ($isoWeek < 1 || $isoWeek > 53) {
             $this->error('Некорректная ISO-неделя. Допустимо: 1..53');
+
             return self::FAILURE;
         }
 
@@ -39,6 +40,7 @@ class TrackerShowWeekCommand extends Command
 
         if ($directions->isEmpty()) {
             $this->warn('Нет направлений (или не найден slug).');
+
             return self::FAILURE;
         }
 
@@ -50,6 +52,7 @@ class TrackerShowWeekCommand extends Command
 
             if ($picked === 'exit') {
                 $this->info('Выход.');
+
                 return self::SUCCESS;
             }
 
@@ -60,6 +63,7 @@ class TrackerShowWeekCommand extends Command
 
         if (! $direction) {
             $this->error('Не удалось определить направление.');
+
             return self::FAILURE;
         }
 
@@ -77,7 +81,7 @@ class TrackerShowWeekCommand extends Command
             ->get()
             ->keyBy('iso_weekday');
 
-        $tracker = new Tracker();
+        $tracker = new Tracker;
 
         $statuses = [];
         foreach ($tracker->weekDays as $index => $dayKey) {
