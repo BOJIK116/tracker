@@ -164,6 +164,7 @@ export default function TodoPanel({
           <ItemActionsMenu
             busy={busy}
             isOpen={openMenuTodoId === todo.id}
+            menuClassName="menuDropdownUp"
             label="Todo actions"
             onToggle={() => toggleMenu(todo.id)}
             onEdit={() => startEditTodo(todo)}
